@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0B0E14]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali & Nabeel Prop Journal - EdgeLog AI</title>
+    
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons for visual indicators -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js CDN for Interactive Trading Metrics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Supabase JS Client library for real-time cloud database syncing -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Google Font 'Inter' for premium readability -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar to match premium TradingView dark mode theme */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131722;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2E39;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2962FF;
+        }
+        /* Neon Glow Utility classes */
+        .glow-green {
+            box-shadow: 0 0 15px rgba(8, 153, 129, 0.15);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(242, 54, 69, 0.15);
+        }
+        .glow-blue {
+            box-shadow: 0 0 20px rgba(41, 98, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-200 antialiased flex flex-col justify-between">
+
+    <!-- PRIVATE LOGIN PORTAL (Displayed by default to protect Ali and Nabeel's trading logs) -->
+    <div id="loginPortal" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0B0E14] px-4">
+        <div class="absolute inset-0 bg-radial-at-t from-indigo-950/20 via-transparent to-transparent pointer-events-none"></div>
+        <div class="bg-[#131722] border border-[#2A2E39] w-full max-w-md rounded-2xl p-8 glow-blue relative">
+            <div class="text-center space-y-3 mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-950/50">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">Ali & Nabeel Journal</h2>
+                <p class="text-xs text-slate-400">Exclusive prop-trading journal access shield. Access code required.</p>
+            </div>
+
+            <!-- Login Input Form -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Select Trader Identity</label>
+                    <select id="loginTrader" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 font-semibold transition">
+                        <option value="Ali">Ali</option>
+                        <option value="Nabeel">Nabeel</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Secret Access Passcode</label>
+                    <div class="relative">
+                        <input id="loginPasscode" type="password" placeholder="••••••••" onkeydown="if(event.key === 'Enter') attemptLogin()" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 tracking-widest transition">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500"></i>
+                    </div>
+                </div>
+                <button onclick="attemptLogin()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-sm font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-950/60 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> Unlock Dashboard
+                </button>
+                <div id="loginError" class="hidden text-center text-xs text-rose-400 bg-rose-950/40 border border-rose-500/20 py-2.5 rounded-lg font-medium">
+                    <i class="fa-solid fa-triangle-exclamation mr-1.5 animate-bounce"></i> Incorrect secret passcode. Try again!
+                </div>
+            </div>
+
+            <div class="text-center mt-8 text-[10px] text-slate-500">
+                System protected by cloud client-side security standards. Secure passcode: <span class="font-mono text-slate-600">TRADE786</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION CONTAINER (Initially hidden until successfully authenticated) -->
+    <div id="mainDashboard" class="hidden flex-1 flex flex-col justify-between">
+        
+        <!-- HEADER ELEMENT -->
+        <header class="bg-[#131722] border-b border-[#2A2E39] sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between flex-wrap gap-4">
+                
+                <!-- Logo & Database Sync Status -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white font-bold text-lg shadow shadow-emerald-950">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-sm font-extrabold text-white tracking-wider uppercase">EdgeLog AI</h1>
+                            <span class="text-[9px] bg-emerald-950 text-emerald-400 font-bold px-1.5 py-0.5 rounded border border-emerald-800">PRO</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 font-medium flex items-center gap-1.5">
+                            <span id="syncStatusBadge" class="inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                            <span id="syncStatusText" class="cursor-pointer hover:text-indigo-400 underline transition" onclick="openDbSettingsModal()">Device Storage (Local)</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Live Performance Greeting & Dynamic Controls -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-[#1C2030] px-3.5 py-1.5 rounded-xl border border-[#2A2E39] text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-circle-user text-indigo-400"></i>
+                        <span class="text-slate-400">Active Identity:</span>
+                        <span id="activeUserLabel" class="text-white font-bold uppercase tracking-wide">Ali</span>
+                    </div>
+
+                    <button onclick="openLogTradeModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold py-2 px-4 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-950 transition">
+                        <i class="fa-solid fa-pen-nib"></i> Record Trade
+                    </button>
+
+                    <button onclick="openDbSettingsModal()" class="bg-[#1C2030] hover:bg-[#2A2E39] text-slate-300 border border-[#2A2E39] text-xs font-bold py-2 px-3 rounded-xl transition" title="Cloud Database Settings">
+                        <i class="fa-solid fa-database"></i> Setup DB
+                    </button>
+
+                    <button onclick="logout()" class="bg-rose-950/50 hover:bg-rose-950 border border-rose-900/40 text-rose-400 hover:text-rose-300 p-2 rounded-xl text-xs transition" title="Logout Permanently">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTAINER AND GRIDS -->
+        <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            
+            <!-- STAGE 1: PORTFOLIO EXECUTIVE METRICS BAR -->
+            <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Cumulative P&L Card -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl glow-blue relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full pointer-events-none"></div>
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Total Net Balance</span>
+                    <h3 id="statNetPnl" class="text-2xl font-black text-slate-100">$0.00</h3>
+                    <div id="statNetPnlTrend" class="text-[10px] font-medium mt-1 text-slate-500 flex items-center gap-1">
+                        <i class="fa-solid fa-calculator"></i> Cumulative earnings
+                    </div>
+                </div>
+
+                <!-- Win Rate Card -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full pointer-events-none"></div>
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Win Rate Indicator</span>
+                    <h3 id="statWinRate" class="text-2xl font-black text-slate-100">0%</h3>
+                    <div id="statWinRateBar" class="w-full bg-[#1C2030] h-1.5 rounded-full mt-2.5 overflow-hidden">
+                        <div id="statWinRateFill" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <!-- Total Trades Logged -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Registered Trades</span>
+                    <h3 id="statTotalTrades" class="text-2xl font-black text-slate-100">0</h3>
+                    <div id="statTraderSplit" class="text-[10px] text-slate-400 mt-2 flex justify-between font-mono">
+                        <span>Ali: 0</span>
+                        <span>Nabeel: 0</span>
+                    </div>
+                </div>
+
+                <!-- Profit Factor (Ratio of Gross Wins vs Gross Losses) -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Profit Factor (P.F)</span>
+                    <h3 id="statProfitFactor" class="text-2xl font-black text-slate-100">0.00</h3>
+                    <p class="text-[10px] text-slate-500 mt-2 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-scale-balanced text-indigo-400"></i> Gross gains to risk index
+                    </p>
+                </div>
+            </section>
+
+            <!-- STAGE 2: 1-2 MONTH DYNAMIC DIAGNOSTIC CARDS (Custom Summary Rules) -->
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                
+                <!-- Best Session Insight -->
+                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <i class="fa-solid fa-clock text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Golden Session</span>
+                        <span id="bestSessionText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
+                        <span class="text-[9px] text-indigo-400">Optimal setup environment</span>
+                    </div>
+                </div>
+
+                <!-- Best Trend / Direction Insight -->
+                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <i class="fa-solid fa-arrows-up-down text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Core Directional Bias</span>
+                        <span id="bestDirectionText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
+                        <span class="text-[9px] text-emerald-400">Highest win rate structure</span>
+                    </div>
+                </div>
+
+                <!-- Optimal Operational Weekday -->
+                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-calendar-day text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Best Trading Day</span>
+                        <span id="bestDayText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
+                        <span class="text-[9px] text-amber-400">Discipline compliance high</span>
+                    </div>
+                </div>
+
+                <!-- Mental Tax Index (Loss to emotional trades) -->
+                <div class="bg-[#1C2030]/50 border border-rose-500/10 rounded-xl p-4 flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-rose-950/60 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                        <i class="fa-solid fa-brain text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 font-bold uppercase block">FOMO/Greed Est. Loss</span>
+                        <span id="mentalTaxText" class="text-xs text-rose-400 font-extrabold block">$0.00</span>
+                        <span class="text-[9px] text-slate-500">Unforced psychological errors</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 3: INTERACTIVE PORTFOLIO CHARTS -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Cumulative Capital curve chart -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-6 rounded-2xl lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-extrabold">Capital Performance Graph</span>
+                            <h4 class="text-xs font-bold text-white">Cumulative Account Equity Curve ($ Output)</h4>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded bg-blue-500"></span>
+                            <span class="text-[10px] text-slate-400 font-medium">Growth line</span>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="capitalCurveChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Session and day volume statistics -->
+                <div class="bg-[#131722] border border-[#2A2E39] p-6 rounded-2xl space-y-4">
+                    <div>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-extrabold">Active Sessions Rating</span>
+                        <h4 class="text-xs font-bold text-white">Win vs Loss Volume by Session Block</h4>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="sessionBarChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 4: ADVANCED DATA FILTERS & INTERACTIVE LEDGER TABLE -->
+            <section class="bg-[#131722] border border-[#2A2E39] rounded-2xl overflow-hidden shadow-xl">
+                
+                <!-- Filters panel -->
+                <div class="bg-[#1C2030] px-6 py-4 border-b border-[#2A2E39] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h4 class="text-sm font-black text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-400"></i> Ali & Nabeel Live Shared Ledger
+                        </h4>
+                        <p class="text-[10px] text-slate-500 font-medium">Filtered data displays descending chronology logs.</p>
+                    </div>
+
+                    <!-- Multi Filters block -->
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <!-- Trader selector -->
+                        <select id="filterTrader" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
+                            <option value="All">All Traders</option>
+                            <option value="Ali">Ali Only</option>
+                            <option value="Nabeel">Nabeel Only</option>
+                        </select>
+                        <!-- Session block -->
+                        <select id="filterSession" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
+                            <option value="All">All Sessions</option>
+                            <option value="London">London Block</option>
+                            <option value="New York">New York Block</option>
+                            <option value="Asian">Asian (Tokyo)</option>
+                        </select>
+                        <!-- Setup type direction -->
+                        <select id="filterDirection" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
+                            <option value="All">All Directions</option>
+                            <option value="Long">Long Setup</option>
+                            <option value="Short">Short Setup</option>
+                        </select>
+                        <!-- Psychology Emotion -->
+                        <select id="filterEmotion" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
+                            <option value="All">All Mindsets</option>
+                            <option value="Calm">Calm & Rule-Compliant</option>
+                            <option value="FOMO">FOMO / Over-Trade</option>
+                            <option value="Greed">Greed / Large size</option>
+                            <option value="Fear">Fear / Early Exit</option>
+                            <option value="Revenge">Revenge / Gussa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Scrollable Ledger Table viewport -->
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr class="bg-[#171B26] text-slate-400 text-[10px] uppercase tracking-wider border-b border-[#2A2E39] font-black">
+                                <th class="py-3 px-4">Date & Time</th>
+                                <th class="py-3 px-4">Trader</th>
+                                <th class="py-3 px-4">Pair / Asset</th>
+                                <th class="py-3 px-4">Direction</th>
+                                <th class="py-3 px-4">Session</th>
+                                <th class="py-3 px-4">Lots</th>
+                                <th class="py-3 px-4">Risk:Reward</th>
+                                <th class="py-3 px-4">P&L ($ Amount)</th>
+                                <th class="py-3 px-4">Outcome</th>
+                                <th class="py-3 px-4">Mindset</th>
+                                <th class="py-3 px-4 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradesTableBody" class="text-xs divide-y divide-[#2A2E39]/10">
+                            <!-- Injected dynamically by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- STAGE 5: INTEGRATED AI PROP COACH & TEXT TO SPEECH (TTS) TERMINAL -->
+            <section id="aiTerminalContainer" class="bg-[#131722] border border-[#2A2E39] rounded-2xl overflow-hidden shadow-2xl glow-blue grid grid-cols-1 lg:grid-cols-3">
+                
+                <!-- Left panel diagnostics and voice panel -->
+                <div class="p-6 bg-[#1C2030]/60 border-r border-[#2A2E39] flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <i class="fa-solid fa-robot text-2xl text-indigo-400 animate-pulse"></i>
+                            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Gemini AI Prop Coach</h4>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">
+                            This AI parses your active journal database, identifies operational anomalies, psychological biases, and compiles detailed tactical guidelines.
+                        </p>
+                        
+                        <!-- Quick strategic diagnostics actions -->
+                        <div class="mt-4 space-y-2">
+                            <button onclick="generatePortfolioAudit()" id="btn-portfolio-audit" class="w-full bg-indigo-950/60 border border-indigo-500/30 hover:border-indigo-500 hover:bg-indigo-950 text-indigo-300 text-[11px] font-bold py-2.5 px-3 rounded-xl flex items-center justify-between transition">
+                                <span><i class="fa-solid fa-chart-line mr-1.5"></i> Run 1-2 Month Audit</span>
+                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                            <button onclick="triggerPsychologyCheck()" class="w-full bg-[#171B26]/60 border border-[#2A2E39] hover:border-indigo-500/30 text-slate-300 text-[11px] font-bold py-2.5 px-3 rounded-xl flex items-center justify-between transition">
+                                <span><i class="fa-solid fa-brain mr-1.5"></i> Analyze Discipline/FOMO</span>
+                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Voice reminder box -->
+                    <div class="bg-indigo-950/20 border border-indigo-500/10 p-3.5 rounded-xl text-center">
+                        <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">PRO PSYCHOLOGY REMINDER</span>
+                        <p id="psychologyQuoteText" class="text-[10px] text-slate-300 italic">"The market is a device for transferring money from the impatient to the patient." – Warren Buffett</p>
+                    </div>
+                </div>
+
+                <!-- Right panel live terminal log and chat stream -->
+                <div class="lg:col-span-2 flex flex-col h-[400px] justify-between bg-[#131722]/40">
+                    <!-- Chat window stream display -->
+                    <div id="aiChatStream" class="p-6 overflow-y-auto space-y-4 flex-1">
+                        <div class="flex gap-2.5 items-start">
+                            <div class="w-7 h-7 rounded-full bg-indigo-950 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-robot text-indigo-400 text-xs"></i>
+                            </div>
+                            <div class="bg-[#1C2030] p-3 rounded-xl rounded-tl-none max-w-[85%] border border-[#2A2E39]">
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Welcome Ali & Nabeel! I am your proprietary trading coach. Drop a query below or click a diagnostics action on the left to review your performance metrics.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voice output player tray -->
+                    <div id="aiVoiceTray" class="hidden px-6 py-2 bg-indigo-950/40 border-t border-indigo-500/10 flex items-center justify-between gap-3 text-xs text-indigo-300">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-headphones text-indigo-400 animate-bounce"></i>
+                            <span>AI Coach Guidance Audio is ready to play.</span>
+                        </div>
+                        <audio id="geminiAudioPlayer" class="h-6" controls></audio>
+                    </div>
+
+                    <!-- User input console drawer -->
+                    <div class="p-4 bg-[#1C2030] border-t border-[#2A2E39] flex gap-2 items-center">
+                        <input id="aiChatInput" type="text" placeholder="Type strategy question (e.g. 'How can I fix my FOMO during NY session?')..." onkeydown="if(event.key === 'Enter') sendChatMessage()" class="flex-1 bg-[#131722] border border-[#2A2E39] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <button onclick="sendChatMessage()" id="btn-send-chat" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-md shadow-indigo-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- FOOTER ELEMENT -->
+        <footer class="bg-[#131722] border-t border-[#2A2E39] py-4 text-center mt-8">
+            <p class="text-[11px] text-slate-500">
+                Ali & Nabeel Prop Journal © 2026. Made with <i class="fa-solid fa-heart text-rose-500"></i> for Elite Market Operations.
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- ADD TRADE MODAL -->
+    <div id="addTradeModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-[#131722] border border-[#2A2E39] rounded-2xl w-full max-w-2xl overflow-hidden glow-blue flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="bg-[#1C2030] border-b border-[#2A2E39] px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-emerald-400"></i>
+                    <h3 class="text-sm font-bold text-white">Record New Trading Journal Entry</h3>
+                </div>
+                <button onclick="closeLogTradeModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <div class="p-6 overflow-y-auto space-y-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Date Input -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Date</label>
+                        <input id="tradeDate" type="date" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <!-- Time Input -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Time</label>
+                        <input id="tradeTime" type="time" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Pair / Asset -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Asset Pair</label>
+                        <input id="tradePair" type="text" placeholder="e.g. EURUSD, XAUUSD" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 uppercase">
+                    </div>
+                    <!-- Session -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Trading Session</label>
+                        <select id="tradeSession" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                            <option value="Asian">Asian (Tokyo)</option>
+                        </select>
+                    </div>
+                    <!-- Direction -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Direction</label>
+                        <select id="tradeDirection" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <option value="Long">Long (Buy)</option>
+                            <option value="Short">Short (Sell)</option>
+                        </select>
+                    </div>
+                    <!-- Lot Size -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Lot Size</label>
+                        <input id="tradeLotSize" type="number" step="0.01" placeholder="0.10" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Entry Price -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Entry Price</label>
+                        <input id="tradeEntryPrice" type="number" step="any" placeholder="1.0850" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <!-- Exit Price -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Exit Price</label>
+                        <input id="tradeExitPrice" type="number" step="any" placeholder="1.0900" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <!-- Risk/Reward R -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Risk:Reward (R)</label>
+                        <input id="tradeRiskReward" type="number" step="0.1" placeholder="2.5" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <!-- Net Profit/Loss -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">P&L ($ Output)</label>
+                        <input id="tradePnl" type="number" step="any" placeholder="e.g. 250 or -120" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Mindset / Emotions -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Predominant Mindset / Emotion</label>
+                        <select id="tradeEmotion" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <option value="Calm">Calm & Rule-Compliant</option>
+                            <option value="FOMO">FOMO (Fear Of Missing Out)</option>
+                            <option value="Greed">Greed (Oversized, premature entry)</option>
+                            <option value="Fear">Fear of Losing (Scared entry/exit)</option>
+                            <option value="Revenge">Revenge Trade (Frustration entry)</option>
+                        </select>
+                    </div>
+                    <!-- Day manually calculated or auto-selected -->
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Day of the Week</label>
+                        <select id="tradeDay" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SCREENSHOT ATTACHMENT SECTION -->
+                <div class="bg-[#171B26] border border-[#2A2E39]/80 rounded-xl p-4 space-y-3">
+                    <span class="text-slate-300 text-xs font-bold flex items-center gap-2"><i class="fa-solid fa-camera text-indigo-400"></i> Trade Setup Chart Screenshot</span>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Option A: Upload File with Auto Compression -->
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1 font-semibold">Upload Local Image (Auto-Compressed)</label>
+                            <div class="relative bg-[#1C2030] border border-dashed border-[#2A2E39] hover:border-indigo-500 rounded-xl p-3 text-center transition cursor-pointer">
+                                <input type="file" id="tradeScreenshotFile" accept="image/*" onchange="handleScreenshotUpload(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                <i class="fa-solid fa-cloud-arrow-up text-indigo-400 mb-1 block"></i>
+                                <span class="text-[10px] text-slate-300 block">Drag & Drop or Click to browse</span>
+                                <span class="text-[9px] text-slate-500 mt-0.5 block">Generates safe micro-payload</span>
+                            </div>
+                        </div>
+
+                        <!-- Option B: Paste Online URL Link -->
+                        <div class="flex flex-col justify-between">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 font-semibold">Or Paste TradingView/Chart Link URL</label>
+                                <input id="tradeScreenshotUrl" type="url" oninput="handleScreenshotUrlChange()" placeholder="https://www.tradingview.com/x/..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div class="text-[9px] text-slate-500 mt-1 italic leading-tight">
+                                Paste TradingView capture link or standard web image addresses here.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sandbox Preview Container -->
+                    <div id="screenshotPreviewContainer" class="hidden">
+                        <span class="text-[9px] text-slate-400 block mb-1">Live Screenshot Preview:</span>
+                        <div class="relative w-full max-h-40 rounded-xl overflow-hidden border border-[#2A2E39] bg-[#0B0E14] flex items-center justify-center">
+                            <img id="screenshotPreviewImg" src="" alt="Screenshot Sandbox" class="max-w-full max-h-40 object-contain">
+                            <button onclick="clearScreenshotSelection()" class="absolute top-2 right-2 bg-rose-950/80 hover:bg-rose-950 text-rose-400 border border-rose-800 rounded-lg px-2.5 py-1 text-[10px] font-bold flex items-center gap-1 transition">
+                                <i class="fa-solid fa-trash-can"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Notes -->
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Technical Confluences & Trade Notes</label>
+                    <textarea id="tradeNotes" rows="3" placeholder="Explain the rationale behind taking this setup, confluences used, and psychological reflections..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+
+                <!-- Custom Notification banner inside modal -->
+                <div id="modalError" class="hidden p-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-lg text-xs">
+                    Please fill out critical inputs (Date, Asset Pair, Direction, P&L Amount).
+                </div>
+
+            </div>
+
+            <!-- Modal Actions Footer -->
+            <div class="bg-[#1C2030] border-t border-[#2A2E39] px-6 py-4 flex items-center justify-end gap-3">
+                <button onclick="closeLogTradeModal()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
+                    Discard
+                </button>
+                <button onclick="saveNewTrade()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold py-2 px-5 rounded-xl shadow-md transition">
+                    Save Trade Log
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SUPABASE DB CONFIGURATION MODAL -->
+    <div id="dbSettingsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div class="bg-[#131722] border border-[#2A2E39] rounded-2xl w-full max-w-lg overflow-hidden glow-blue flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="bg-[#1C2030] border-b border-[#2A2E39] px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-database text-indigo-400"></i>
+                    <h3 class="text-sm font-bold text-white">Database Settings & Cloud Sync</h3>
+                </div>
+                <button onclick="closeDbSettingsModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto space-y-4">
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    By default, your trades are saved safely inside your device's browser memory (**LocalStorage**). 
+                    To sync with Nabeel in real-time, register a free project on <a href="https://supabase.com" target="_blank" class="text-indigo-400 underline hover:text-indigo-300 font-semibold">Supabase</a> and copy your credentials below:
+                </p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Supabase Project URL</label>
+                        <input id="dbUrl" type="text" placeholder="https://your-project.supabase.co" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Supabase Anon/Public Key</label>
+                        <input id="dbAnonKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div class="border-t border-[#2A2E39]/50 pt-4 space-y-3">
+                    <span class="text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-brain text-indigo-400"></i> Gemini LLM Settings (GitHub Deploy Option)</span>
+                    <p class="text-[10px] text-slate-400 leading-normal">
+                        To run AI audits on your custom GitHub Pages deploy, register a free key on Google AI Studio, or leave it blank to utilize the default sandboxed environment credentials:
+                    </p>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Optional Gemini API Key</label>
+                        <input id="geminiKeyField" type="password" placeholder="AIzaSy..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+                    </div>
+                </div>
+
+                <!-- Database Helper / Setup SQL Instructions -->
+                <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-3 space-y-2">
+                    <span class="text-[10px] bg-indigo-900/50 text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-700">SQL Setup Instruction</span>
+                    <p class="text-[10px] text-slate-400 leading-relaxed">
+                        Copy and execute this exact script inside your Supabase **SQL Editor** tab to create the required table layout:
+                    </p>
+                    <textarea readonly class="w-full h-24 bg-black/50 border border-[#2A2E39] rounded-lg p-2 font-mono text-[9px] text-emerald-400 select-all focus:outline-none" onclick="document.execCommand('copy');">create table trades (
+  id uuid default gen_random_uuid() primary key,
+  trader text not null,
+  date date not null,
+  time text,
+  day text,
+  pair text not null,
+  session text,
+  direction text,
+  lot_size numeric,
+  entry_price numeric,
+  exit_price numeric,
+  risk_reward numeric,
+  pnl numeric not null,
+  outcome text,
+  emotion text,
+  notes text,
+  screenshot text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Turn off RLS or define public policy:
+alter table trades enable row level security;
+create policy "Public access" on trades for all using (true);</textarea>
+                    <span class="text-[9px] text-slate-500 block text-right"><i class="fa-solid fa-info-circle"></i> Click box to copy code</span>
+                </div>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="bg-[#1C2030] border-t border-[#2A2E39] px-6 py-4 flex items-center justify-between">
+                <button onclick="clearDbCredentials()" class="bg-rose-950/30 border border-rose-900/30 text-rose-400 hover:bg-rose-950/50 text-xs font-semibold py-2 px-4 rounded-xl transition">
+                    Disconnect Cloud
+                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeDbSettingsModal()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
+                        Cancel
+                    </button>
+                    <button onclick="saveDbCredentials()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold py-2 px-5 rounded-xl shadow-md transition">
+                        Connect Database
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="confirmDeleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div class="bg-[#131722] border border-rose-500/30 rounded-2xl w-full max-w-sm overflow-hidden glow-red p-6 space-y-4">
+            <div class="flex items-center gap-3 text-rose-400">
+                <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
+                <h3 class="text-sm font-bold text-white">Delete Journal Entry?</h3>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                This process is completely irreversible. This entry will be deleted permanently from your trading dashboard history.
+            </p>
+            <div class="flex justify-end gap-3 mt-2">
+                <button onclick="closeDeleteConfirmation()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
+                    Cancel
+                </button>
+                <button onclick="deleteTrade()" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs font-semibold py-2 px-5 rounded-xl transition">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL SCREEN LIGHTBOX MODAL FOR IMAGES -->
+    <div id="screenshotLightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
+        <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
+            <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-slate-400 hover:text-white transition text-xs bg-[#1C2030] py-2 px-4 rounded-xl border border-[#2A2E39] flex items-center gap-2">
+                <i class="fa-solid fa-xmark text-sm"></i> Close Screen
+            </button>
+            <img id="lightboxImg" src="" alt="Trade Screenshot Full" class="max-w-full max-h-[85vh] rounded-xl border border-[#2A2E39] object-contain shadow-2xl">
+            <div class="mt-4 flex gap-3">
+                <a id="lightboxDownloadBtn" href="#" download="trade-screenshot.jpg" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition shadow-md shadow-indigo-950">
+                    <i class="fa-solid fa-download"></i> Download Chart Image
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST POPUP NOTIFICATION -->
+    <div id="notificationToast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm bg-[#131722] border border-[#2A2E39] p-4 rounded-2xl flex items-start gap-3 shadow-2xl">
+        <div id="toastIconContainer" class="p-2 rounded-xl text-white">
+            <i id="toastIcon" class="fa-solid fa-info text-sm"></i>
+        </div>
+        <div>
+            <h4 id="toastTitle" class="text-xs font-bold text-white">Notification Alert</h4>
+            <p id="toastMessage" class="text-[11px] text-slate-400 mt-1 leading-relaxed">No dynamic message set.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC CORE -->
+    <script>
+        // Seed initial trades if both LocalStorage and Supabase are empty
+        const defaultMockTrades = [
+            { id: "mock-1", trader: "Ali", date: "2026-06-15", time: "14:30", day: "Monday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.08520, exitPrice: 1.08950, lotSize: 0.5, pnl: 215.00, outcome: "Win", riskReward: "2.1", emotion: "Calm", notes: "Clean breakout from Asian session range. Retest was successful.", screenshot: "https://placehold.co/800x450/131722/089981?text=EURUSD+London+Breakout+Success" },
+            { id: "mock-2", trader: "Nabeel", date: "2026-06-16", time: "16:15", day: "Tuesday", pair: "GBPUSD", direction: "Short", session: "New York", entryPrice: 1.26800, exitPrice: 1.26420, lotSize: 1.0, pnl: 380.00, outcome: "Win", riskReward: "3.0", emotion: "Calm", notes: "NY opening sweep. Caught high of the day setup perfectly.", screenshot: "https://placehold.co/800x450/131722/2962FF?text=GBPUSD+New+York+Liquidity+Grab" },
+            { id: "mock-3", trader: "Ali", date: "2026-06-18", time: "09:10", day: "Thursday", pair: "BTCUSD", direction: "Long", session: "Asian", entryPrice: 67200, exitPrice: 66800, lotSize: 0.1, pnl: -40.00, outcome: "Loss", riskReward: "1.5", emotion: "FOMO", notes: "Entered too early without waiting for H1 candle close. Over-eager." },
+            { id: "mock-4", trader: "Nabeel", date: "2026-06-22", time: "15:45", day: "Monday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2345.50, exitPrice: 2352.00, lotSize: 0.3, pnl: -195.00, outcome: "Loss", riskReward: "2.0", emotion: "Greed", notes: "Tried to short gold during high impact news. Slipped stop loss.", screenshot: "https://placehold.co/800x450/131722/F23645?text=Gold+News+Slippage+Loss" },
+            { id: "mock-5", trader: "Ali", date: "2026-06-24", time: "13:10", day: "Wednesday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.09100, exitPrice: 1.09650, lotSize: 0.5, pnl: 275.00, outcome: "Win", riskReward: "2.5", emotion: "Calm", notes: "Beautiful structural shift on M15. Highly confident setup." },
+            { id: "mock-6", trader: "Nabeel", date: "2026-06-28", time: "16:00", day: "Tuesday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2331.00, exitPrice: 2320.00, lotSize: 0.4, pnl: 440.00, outcome: "Win", riskReward: "3.5", emotion: "Calm", notes: "Liquidity grab at 2335, then instant rejection. Held beautifully.", screenshot: "https://placehold.co/800x450/131722/089981?text=Gold+M15+Orderblock+Refinement" }
+        ];
+
+        // Global State Variables
+        let tradesList = [];
+        let pnlChartInstance = null;
+        let sessionChartInstance = null;
+        let currentTrader = null;
+        let supabaseClient = null;
+        let selectedScreenshotBase64 = ""; // Holds local uploaded base64 data or chart link
+        let tradeIdToDelete = null; // Guard for non-alert, safe deletion flow
+        
+        let geminiApiKey = localStorage.getItem("gemini_api_key") || "";
+        let isAiAnalyzing = false;
+        let aiChatHistory = [];
+        let activeAudioUrl = null;
+
+        // Credentials Autodetect from local memory
+        window.addEventListener("DOMContentLoaded", () => {
+            initializeSupabaseConnection();
+            checkExistingSession();
+        });
+
+        // Safe Login execution logic
+        function attemptLogin() {
+            const selected = document.getElementById("loginTrader").value;
+            const enteredPasscode = document.getElementById("loginPasscode").value.trim();
+            const errorBanner = document.getElementById("loginError");
+
+            if (enteredPasscode === "TRADE786") {
+                errorBanner.classList.add("hidden");
+                currentTrader = selected;
+                
+                // Save session in localStorage
+                localStorage.setItem("journal_authenticated_user", selected);
+                
+                // Reveal main interface
+                document.getElementById("loginPortal").classList.add("hidden");
+                document.getElementById("mainDashboard").classList.remove("hidden");
+                document.getElementById("activeUserLabel").innerText = selected;
+                
+                // Load operational data
+                syncAndRefreshAllData();
+                showNotification("Welcome, " + selected + "!", "Your premium trading dashboard has decrypted successfully.", "success");
+            } else {
+                errorBanner.classList.remove("hidden");
+            }
+        }
+
+        function checkExistingSession() {
+            const savedUser = localStorage.getItem("journal_authenticated_user");
+            if (savedUser) {
+                currentTrader = savedUser;
+                document.getElementById("loginPortal").classList.add("hidden");
+                document.getElementById("mainDashboard").classList.remove("hidden");
+                document.getElementById("activeUserLabel").innerText = savedUser;
+                syncAndRefreshAllData();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("journal_authenticated_user");
+            currentTrader = null;
+            document.getElementById("mainDashboard").classList.add("hidden");
+            document.getElementById("loginPortal").classList.remove("hidden");
+            document.getElementById("loginPasscode").value = "";
+        }
+
+        // Initialize Supabase optional integration
+        function initializeSupabaseConnection() {
+            const url = localStorage.getItem("supabase_url");
+            const key = localStorage.getItem("supabase_key");
+            const syncDot = document.getElementById("syncStatusBadge");
+            const syncText = document.getElementById("syncStatusText");
+
+            if (url && key) {
+                try {
+                    // Initialize the client library
+                    supabaseClient = supabase.createClient(url, key);
+                    syncDot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                    syncText.innerText = "Cloud Synced (Supabase)";
+                    syncText.title = "Real-time updates between Ali & Nabeel active.";
+                } catch (e) {
+                    console.error("Supabase connection parameters faulty:", e);
+                    supabaseClient = null;
+                    setFallbackToLocalMode();
+                }
+            } else {
+                setFallbackToLocalMode();
+            }
+        }
+
+        function setFallbackToLocalMode() {
+            const syncDot = document.getElementById("syncStatusBadge");
+            const syncText = document.getElementById("syncStatusText");
+            supabaseClient = null;
+            syncDot.className = "inline-block w-2.5 h-2.5 rounded-full bg-yellow-500";
+            syncText.innerText = "Device Storage (Local)";
+            syncText.title = "Save trades privately inside your browser memory.";
+        }
+
+        // Pull active databases (local/Supabase hybrid model)
+        async function syncAndRefreshAllData() {
+            if (supabaseClient) {
+                await fetchSupabaseTrades();
+            } else {
+                fetchLocalTrades();
+            }
+        }
+
+        function fetchLocalTrades() {
+            const raw = localStorage.getItem("trading_journal_trades");
+            if (raw) {
+                tradesList = JSON.parse(raw);
+            } else {
+                // Preload mock trades first time only
+                tradesList = [...defaultMockTrades];
+                localStorage.setItem("trading_journal_trades", JSON.stringify(tradesList));
+            }
+            refreshDashboardAndTable();
+        }
+
+        async function fetchSupabaseTrades() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('trades')
+                    .select('*')
+                    .order('date', { ascending: true });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    // Map snake_case columns back to our JS camelCase structure
+                    tradesList = data.map(item => ({
+                        id: item.id,
+                        trader: item.trader,
+                        date: item.date,
+                        time: item.time,
+                        day: item.day,
+                        pair: item.pair,
+                        session: item.session,
+                        direction: item.direction,
+                        lotSize: parseFloat(item.lot_size) || 0.10,
+                        entryPrice: parseFloat(item.entry_price) || 0,
+                        exitPrice: parseFloat(item.exit_price) || 0,
+                        riskReward: parseFloat(item.risk_reward) || 1.0,
+                        pnl: parseFloat(item.pnl),
+                        outcome: item.outcome,
+                        emotion: item.emotion,
+                        notes: item.notes,
+                        screenshot: item.screenshot
+                    }));
+                } else {
+                    // Supabase empty, let's auto-seed mock trades so they are not left with blank page
+                    for (const seed of defaultMockTrades) {
+                        const dbPayload = {
+                            trader: seed.trader,
+                            date: seed.date,
+                            time: seed.time,
+                            day: seed.day,
+                            pair: seed.pair,
+                            session: seed.session,
+                            direction: seed.direction,
+                            lot_size: seed.lotSize,
+                            entry_price: seed.entryPrice,
+                            exit_price: seed.exitPrice,
+                            risk_reward: parseFloat(seed.riskReward),
+                            pnl: seed.pnl,
+                            outcome: seed.outcome,
+                            emotion: seed.emotion,
+                            notes: seed.notes,
+                            screenshot: seed.screenshot
+                        };
+                        await supabaseClient.from('trades').insert([dbPayload]);
+                    }
+                    // Fetch again
+                    const { data: reFetched } = await supabaseClient.from('trades').select('*').order('date', { ascending: true });
+                    if (reFetched) {
+                        tradesList = reFetched.map(item => ({
+                            id: item.id,
+                            trader: item.trader,
+                            date: item.date,
+                            time: item.time,
+                            day: item.day,
+                            pair: item.pair,
+                            session: item.session,
+                            direction: item.direction,
+                            lotSize: parseFloat(item.lot_size) || 0.10,
+                            entryPrice: parseFloat(item.entry_price) || 0,
+                            exitPrice: parseFloat(item.exit_price) || 0,
+                            riskReward: parseFloat(item.risk_reward) || 1.0,
+                            pnl: parseFloat(item.pnl),
+                            outcome: item.outcome,
+                            emotion: item.emotion,
+                            notes: item.notes,
+                            screenshot: item.screenshot
+                        }));
+                    }
+                }
+                refreshDashboardAndTable();
+            } catch (err) {
+                console.error("Failed to read Supabase logs:", err);
+                showNotification("Connection Warning", "Supabase error. Falling back to local offline storage.", "error");
+                fetchLocalTrades();
+            }
+        }
+    </script>
+
+    <script>
+        // Refresh charts, executive KPIs, and ledger rows
+        function refreshDashboardAndTable() {
+            // Apply current UI dropdown filters
+            const targetTrader = document.getElementById("filterTrader").value;
+            const targetSession = document.getElementById("filterSession").value;
+            const targetDirection = document.getElementById("filterDirection").value;
+            const targetEmotion = document.getElementById("filterEmotion").value;
+
+            const filteredTrades = tradesList.filter(t => {
+                const matchesTrader = targetTrader === "All" || t.trader === targetTrader;
+                const matchesSession = targetSession === "All" || t.session === targetSession;
+                const matchesDirection = targetDirection === "All" || t.direction === targetDirection;
+                const matchesEmotion = targetEmotion === "All" || t.emotion === targetEmotion;
+                return matchesTrader && matchesSession && matchesDirection && matchesEmotion;
+            });
+
+            // Update UI
+            calculateExecutiveMetrics(filteredTrades);
+            renderCharts(filteredTrades);
+            renderTable(filteredTrades);
+        }
+
+        // Calculate Executive KPIs
+        function calculateExecutiveMetrics(trades) {
+            const total = trades.length;
+            document.getElementById("statTotalTrades").innerText = total;
+
+            const aliCount = trades.filter(t => t.trader === "Ali").length;
+            const nabeelCount = trades.filter(t => t.trader === "Nabeel").length;
+            document.getElementById("statTraderSplit").innerHTML = `<span>Ali: ${aliCount}</span><span>Nabeel: ${nabeelCount}</span>`;
+
+            if (total === 0) {
+                document.getElementById("statNetPnl").innerText = "$0.00";
+                document.getElementById("statNetPnl").className = "text-2xl font-black text-slate-100";
+                document.getElementById("statWinRate").innerText = "0%";
+                document.getElementById("statWinRateFill").style.width = "0%";
+                document.getElementById("statProfitFactor").innerText = "0.00";
+                
+                // Clear 1-2 month diagnostics summary indicators
+                document.getElementById("bestSessionText").innerText = "No Data Analyzed";
+                document.getElementById("bestDirectionText").innerText = "No Data Analyzed";
+                document.getElementById("bestDayText").innerText = "No Data Analyzed";
+                document.getElementById("mentalTaxText").innerText = "$0.00";
+                return;
+            }
+
+            // Calculations
+            let totalProfit = 0;
+            let winsCount = 0;
+            let grossWins = 0;
+            let grossLosses = 0;
+
+            // Diagnostic accumulators
+            const sessionsMap = {};
+            const directionsMap = {};
+            const daysMap = {};
+            let mentalTaxValue = 0; // Cumulative losses on bad emotional triggers
+
+            trades.forEach(t => {
+                const amount = parseFloat(t.pnl) || 0;
+                totalProfit += amount;
+                if (amount >= 0) {
+                    winsCount++;
+                    grossWins += amount;
+                } else {
+                    grossLosses += Math.abs(amount);
+                }
+
+                // 1. Session tracking
+                sessionsMap[t.session] = (sessionsMap[t.session] || 0) + amount;
+                // 2. Direction tracking
+                directionsMap[t.direction] = (directionsMap[t.direction] || 0) + amount;
+                // 3. Weekday tracking
+                if (t.day) {
+                    daysMap[t.day] = (daysMap[t.day] || 0) + amount;
+                }
+
+                // 4. Emotional loss tracker (FOMO, Revenge, Greed are penalized)
+                if (['FOMO', 'Greed', 'Revenge'].includes(t.emotion) && amount < 0) {
+                    mentalTaxValue += Math.abs(amount);
+                }
+            });
+
+            // Render net P&L text format with colors
+            const pnlLabel = document.getElementById("statNetPnl");
+            pnlLabel.innerText = (totalProfit >= 0 ? '+' : '') + '$' + totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            pnlLabel.className = `text-2xl font-black ${totalProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+            // Win rate calculations
+            const winRatePercent = Math.round((winsCount / total) * 100);
+            document.getElementById("statWinRate").innerText = winRatePercent + "%";
+            document.getElementById("statWinRateFill").style.width = winRatePercent + "%";
+
+            // Profit Factor calculation
+            const profitFactor = grossLosses === 0 ? grossWins.toFixed(2) : (grossWins / grossLosses).toFixed(2);
+            document.getElementById("statProfitFactor").innerText = profitFactor;
+
+            // Generate 1-2 Month metrics summary values
+            // Determine best session
+            let bestSession = "None";
+            let maxSessionPnl = -Infinity;
+            Object.keys(sessionsMap).forEach(s => {
+                if (sessionsMap[s] > maxSessionPnl) {
+                    maxSessionPnl = sessionsMap[s];
+                    bestSession = s;
+                }
+            });
+            document.getElementById("bestSessionText").innerText = bestSession !== "None" && maxSessionPnl > 0 ? `${bestSession} Session` : "No session wins";
+
+            // Determine best direction
+            let bestDirection = "None";
+            let maxDirectionPnl = -Infinity;
+            Object.keys(directionsMap).forEach(d => {
+                if (directionsMap[d] > maxDirectionPnl) {
+                    maxDirectionPnl = directionsMap[d];
+                    bestDirection = d;
+                }
+            });
+            document.getElementById("bestDirectionText").innerText = bestDirection !== "None" && maxDirectionPnl > 0 ? `${bestDirection} Trades` : "No directional wins";
+
+            // Determine best day
+            let bestDay = "None";
+            let maxDayPnl = -Infinity;
+            Object.keys(daysMap).forEach(dy => {
+                if (daysMap[dy] > maxDayPnl) {
+                    maxDayPnl = daysMap[dy];
+                    bestDay = dy;
+                }
+            });
+            document.getElementById("bestDayText").innerText = bestDay !== "None" && maxDayPnl > 0 ? bestDay : "No profitable days";
+
+            // Render mental tax estimation
+            document.getElementById("mentalTaxText").innerText = `$${mentalTaxValue.toFixed(2)}`;
+        }
+
+        // Render cumulative line charts and session statistics charts
+        function renderCharts(trades) {
+            // 1. Cumulative Capital Curve Construction
+            const capitalCurveCtx = document.getElementById('capitalCurveChart').getContext('2d');
+            
+            // Build absolute chronological P&L trajectory
+            let runningSum = 0;
+            const labels = ["Start"];
+            const chartDataPoints = [0];
+
+            trades.forEach((t, index) => {
+                runningSum += parseFloat(t.pnl) || 0;
+                labels.push(`${t.date} (${t.pair})`);
+                chartDataPoints.push(runningSum);
+            });
+
+            if (pnlChartInstance) {
+                pnlChartInstance.destroy();
+            }
+
+            pnlChartInstance = new Chart(capitalCurveCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Combined Capital ($)',
+                        data: chartDataPoints,
+                        borderColor: '#2962FF',
+                        borderWidth: 2.5,
+                        backgroundColor: 'rgba(41, 98, 255, 0.04)',
+                        fill: true,
+                        tension: 0.1,
+                        pointBackgroundColor: '#2962FF',
+                        pointBorderColor: '#131722',
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#626D7F', font: { size: 9 } },
+                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
+                        },
+                        y: {
+                            ticks: { color: '#626D7F', font: { size: 9 } },
+                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
+                        }
+                    }
+                }
+            });
+
+            // 2. Bar Chart: Win vs Loss Metrics grouped by Session (London, NY, Asian)
+            const sessionBarCtx = document.getElementById('sessionBarChart').getContext('2d');
+
+            const sessionStructure = {
+                'London': { win: 0, loss: 0 },
+                'New York': { win: 0, loss: 0 },
+                'Asian': { win: 0, loss: 0 }
+            };
+
+            trades.forEach(t => {
+                const amount = parseFloat(t.pnl) || 0;
+                const activeBlock = t.session || 'London';
+                if (sessionStructure[activeBlock]) {
+                    if (amount >= 0) {
+                        sessionStructure[activeBlock].win += amount;
+                    } else {
+                        sessionStructure[activeBlock].loss += Math.abs(amount);
+                    }
+                }
+            });
+
+            if (sessionChartInstance) {
+                sessionChartInstance.destroy();
+            }
+
+            sessionChartInstance = new Chart(sessionBarCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['London Block', 'New York Block', 'Asian (Tokyo)'],
+                    datasets: [
+                        {
+                            label: 'Gains ($)',
+                            data: [sessionStructure['London'].win, sessionStructure['New York'].win, sessionStructure['Asian'].win],
+                            backgroundColor: '#089981',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Losses ($)',
+                            data: [sessionStructure['London'].loss, sessionStructure['New York'].loss, sessionStructure['Asian'].loss],
+                            backgroundColor: '#f23645',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#626D7F', font: { size: 9 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#626D7F', font: { size: 9 } },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { color: '#626D7F', font: { size: 9 } },
+                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        // Renders ledger rows dynamically
+        function renderTable(trades) {
+            const tbody = document.getElementById("tradesTableBody");
+            tbody.innerHTML = "";
+
+            if (trades.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="py-10 text-center text-slate-500 text-xs italic">
+                            <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>
+                            No trading record matching active filters. Click 'Record Trade' to log one.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Descending order for the ledger view
+            const chronologicalDesc = [...trades].reverse();
+
+            chronologicalDesc.forEach(t => {
+                const dateObj = new Date(t.date);
+                const dayName = t.day || 'Monday';
+                const pnlAmount = parseFloat(t.pnl) || 0;
+                const isWin = pnlAmount >= 0;
+
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-[#1C2030]/30 transition duration-150 border-b border-[#2A2E39]/20";
+                
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <span class="block text-white font-semibold">${t.date}</span>
+                        <span class="text-[10px] text-slate-500">${t.time || 'N/A'} • ${dayName}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${t.trader === 'Ali' ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-blue-950 text-blue-300 border border-blue-800'}">
+                            ${t.trader}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 font-bold text-slate-200">${t.pair ? t.pair.toUpperCase() : 'N/A'}</td>
+                    <td class="py-3 px-4">
+                        <span class="flex items-center gap-1.5 ${t.direction === 'Long' ? 'text-emerald-400' : 'text-rose-400'} font-semibold">
+                            <i class="fa-solid ${t.direction === 'Long' ? 'fa-chart-line' : 'fa-arrow-trend-down'}"></i> ${t.direction}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-slate-300 font-medium">${t.session || 'London'}</td>
+                    <td class="py-3 px-4 text-slate-400">${t.lotSize || '0.10'}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-300">${t.riskReward || '1.0'}:1</td>
+                    <td class="py-3 px-4 font-bold ${isWin ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${isWin ? '+' : ''}$${pnlAmount.toFixed(2)}
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isWin ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20' : 'bg-rose-950/60 text-rose-400 border border-rose-500/20'}">
+                            ${isWin ? 'WIN' : 'LOSS'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="text-slate-400 text-[11px] flex items-center gap-1">
+                            <i class="fa-solid ${t.emotion === 'Calm' ? 'fa-face-smile text-emerald-400' : 'fa-face-frown text-amber-400'} text-xs"></i>
+                            ${t.emotion || 'Calm'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="requestDeleteTrade('${t.id}')" class="text-slate-500 hover:text-rose-400 transition duration-150 p-1" title="Delete trade permanently">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </td>
+                `;
+
+                // Sub-row containing notes details and screenshots
+                const notesTr = document.createElement("tr");
+                notesTr.className = "bg-[#131722]/40 border-b border-[#2A2E39]/10";
+                
+                notesTr.innerHTML = `
+                    <td colspan="11" class="py-2.5 px-4 text-[11px] text-slate-400">
+                        <div class="flex flex-col md:flex-row gap-4 items-start">
+                            ${t.screenshot ? `
+                            <div class="relative w-48 h-28 flex-shrink-0 bg-[#0B0E14] rounded-xl overflow-hidden border border-[#2A2E39] cursor-zoom-in group glow-blue" onclick="openLightbox('${t.screenshot.replace(/'/g, "\\'")}')">
+                                <img src="${t.screenshot}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/400x200/131722/F23645?text=Invalid+Image+Source';">
+                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-200">
+                                    <span class="text-[10px] text-white bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700 font-bold"><i class="fa-solid fa-expand mr-1 text-indigo-400"></i> Maximize Chart</span>
+                                </div>
+                            </div>
+                            ` : `
+                            <div class="w-48 h-28 flex-shrink-0 bg-[#1C2030]/20 rounded-xl border border-dashed border-[#2A2E39] flex flex-col items-center justify-center text-slate-600">
+                                <i class="fa-regular fa-image text-lg mb-1"></i>
+                                <span class="text-[9px]">No Chart Captured</span>
+                            </div>
+                            `}
+                            <div class="flex-1 space-y-1.5 min-w-0">
+                                <span class="font-bold text-slate-500 uppercase tracking-wider text-[9px] block">Technical Confluences & Trade Notes</span>
+                                <p class="italic text-slate-300 leading-relaxed">"${t.notes || 'No confluences logged. Always note down your strategy to retain long-term memory!'}"</p>
+                                
+                                <div class="mt-3 p-3 bg-indigo-950/20 border border-indigo-500/20 rounded-xl font-sans">
+                                    <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 text-xs"></i>
+                                            <span class="text-xs font-bold text-indigo-300">Gemini Vision Trade Audit</span>
+                                        </div>
+                                        <button onclick="analyzeIndividualTrade('${t.id}')" id="btn-audit-${t.id}" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-[10px] font-bold py-1 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
+                                            <i class="fa-solid fa-robot"></i> Audit Trade & Chart
+                                        </button>
+                                    </div>
+                                    <div id="ai-response-${t.id}" class="text-[11px] text-slate-400 leading-relaxed whitespace-pre-line select-text">
+                                        Click 'Audit Trade & Chart' to have Gemini analyze your technical notes, emotions, and charts dynamically.
+                                    </div>
+                                    <div id="ai-audio-panel-${t.id}" class="hidden mt-2 flex items-center gap-2">
+                                        <button onclick="speakResponseText('${t.id}')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[10px] py-1 px-2.5 rounded-lg flex items-center gap-1.5 transition">
+                                            <i class="fa-solid fa-volume-high"></i> Listen to Coach Guidance
+                                        </button>
+                                        <span id="audio-loading-${t.id}" class="hidden text-[9px] text-indigo-400 animate-pulse"><i class="fa-solid fa-circle-notch animate-spin"></i> Converting voice...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                tbody.appendChild(notesTr);
+            });
+        }
+
+        // Delete Trade Trigger Confirmation Modal
+        function requestDeleteTrade(id) {
+            tradeIdToDelete = id;
+            document.getElementById("confirmDeleteModal").classList.remove("hidden");
+        }
+
+        function closeDeleteConfirmation() {
+            tradeIdToDelete = null;
+            document.getElementById("confirmDeleteModal").classList.add("hidden");
+        }
+
+        // Delete Trade Logic Execution
+        async function deleteTrade() {
+            if (!tradeIdToDelete) return;
+            const id = tradeIdToDelete;
+            closeDeleteConfirmation();
+
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('trades')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) throw error;
+                    
+                    showNotification("Trade Deleted", "Trade register successfully deleted from Supabase cloud.", "success");
+                    fetchSupabaseTrades();
+                } catch(e) {
+                    console.error("Firebase deletion failed:", e);
+                    showNotification("Delete Error", "Could not remove log from Cloud.", "error");
+                }
+            } else {
+                // Offline LocalStorage path
+                tradesList = tradesList.filter(t => t.id !== id);
+                localStorage.setItem("trading_journal_trades", JSON.stringify(tradesList));
+                refreshDashboardAndTable();
+                showNotification("Trade Deleted", "Trade removed from your device's browser memory.", "info");
+            }
+        }
+    </script>
+
+    <script>
+        // Form trigger controls
+        function openLogTradeModal() {
+            // Preset current date & time
+            const now = new Date();
+            const dateStr = now.toISOString().substring(0, 10);
+            const timeStr = now.toTimeString().substring(0, 5);
+            
+            // Map days
+            const daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const currentDayName = daysMap[now.getDay()];
+
+            document.getElementById("tradeDate").value = dateStr;
+            document.getElementById("tradeTime").value = timeStr;
+            document.getElementById("tradeDay").value = currentDayName === "Saturday" || currentDayName === "Sunday" ? "Friday" : currentDayName;
+
+            // Reset other form variables
+            document.getElementById("tradePair").value = "";
+            document.getElementById("tradeLotSize").value = "0.10";
+            document.getElementById("tradeEntryPrice").value = "";
+            document.getElementById("tradeExitPrice").value = "";
+            document.getElementById("tradeRiskReward").value = "2.0";
+            document.getElementById("tradePnl").value = "";
+            document.getElementById("tradeNotes").value = "";
+            document.getElementById("tradeEmotion").value = "Calm";
+
+            // Reset screenshot variables
+            clearScreenshotSelection();
+
+            document.getElementById("modalError").classList.add("hidden");
+            document.getElementById("addTradeModal").classList.remove("hidden");
+        }
+
+        function closeLogTradeModal() {
+            document.getElementById("addTradeModal").classList.add("hidden");
+        }
+
+        // SCREENSHOT LOGIC CONTROLS
+        function handleScreenshotUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewContainer = document.getElementById("screenshotPreviewContainer");
+            const previewImg = document.getElementById("screenshotPreviewImg");
+            previewContainer.classList.remove("hidden");
+            
+            // Show processing placeholder
+            previewImg.src = "https://placehold.co/400x200/131722/D1D4DC?text=Compressing+Image...";
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Create scale canvas to compress high-res screenshots
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 800; // Optimal thumbnail resolution
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Compress to lightweight JPEG (typically 50-80kb only!)
+                    selectedScreenshotBase64 = canvas.toDataURL("image/jpeg", 0.7);
+                    
+                    previewImg.src = selectedScreenshotBase64;
+                    document.getElementById("tradeScreenshotUrl").value = ""; // Clear url text input if file uploaded
+                    showNotification("Screenshot Added", "Chart loaded and optimized for memory efficiency.", "success");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleScreenshotUrlChange() {
+            const urlVal = document.getElementById("tradeScreenshotUrl").value.trim();
+            const previewContainer = document.getElementById("screenshotPreviewContainer");
+            const previewImg = document.getElementById("screenshotPreviewImg");
+
+            if (urlVal) {
+                selectedScreenshotBase64 = urlVal;
+                previewContainer.classList.remove("hidden");
+                previewImg.src = urlVal;
+                previewImg.onerror = function() {
+                    previewImg.src = "https://placehold.co/400x200/rose/white?text=Invalid+Image+URL+Address";
+                };
+            } else {
+                selectedScreenshotBase64 = "";
+                previewContainer.classList.add("hidden");
+            }
+        }
+
+        function clearScreenshotSelection() {
+            selectedScreenshotBase64 = "";
+            document.getElementById("tradeScreenshotFile").value = "";
+            document.getElementById("tradeScreenshotUrl").value = "";
+            document.getElementById("screenshotPreviewContainer").classList.add("hidden");
+            document.getElementById("screenshotPreviewImg").src = "";
+        }
+
+        // LIGHTBOX CONTROLS
+        function openLightbox(src) {
+            const lightbox = document.getElementById("screenshotLightbox");
+            const img = document.getElementById("lightboxImg");
+            const downloadBtn = document.getElementById("lightboxDownloadBtn");
+            
+            img.src = src;
+            downloadBtn.href = src;
+            
+            lightbox.classList.remove("hidden");
+            document.body.style.overflow = "hidden"; // Prevent scrolling behind
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById("screenshotLightbox");
+            lightbox.classList.add("hidden");
+            document.body.style.overflow = ""; // Re-enable scrolling
+        }
+
+        // Database settings helpers
+        function openDbSettingsModal() {
+            // Load current inputs
+            document.getElementById("dbUrl").value = localStorage.getItem("supabase_url") || "";
+            document.getElementById("dbAnonKey").value = localStorage.getItem("supabase_key") || "";
+            document.getElementById("geminiKeyField").value = localStorage.getItem("gemini_api_key") || "";
+            document.getElementById("dbSettingsModal").classList.remove("hidden");
+        }
+
+        function closeDbSettingsModal() {
+            document.getElementById("dbSettingsModal").classList.add("hidden");
+        }
+
+        function saveDbCredentials() {
+            const url = document.getElementById("dbUrl").value.trim();
+            const key = document.getElementById("dbAnonKey").value.trim();
+            const geminiKey = document.getElementById("geminiKeyField").value.trim();
+
+            if (url && key) {
+                localStorage.setItem("supabase_url", url);
+                localStorage.setItem("supabase_key", key);
+            }
+            if (geminiKey) {
+                localStorage.setItem("gemini_api_key", geminiKey);
+                geminiApiKey = geminiKey;
+            }
+
+            closeDbSettingsModal();
+            initializeSupabaseConnection();
+            syncAndRefreshAllData();
+            showNotification("Configuration Updated", "Database and API parameters saved.", "success");
+        }
+
+        function clearDbCredentials() {
+            localStorage.removeItem("supabase_url");
+            localStorage.removeItem("supabase_key");
+            localStorage.removeItem("gemini_api_key");
+            
+            document.getElementById("dbUrl").value = "";
+            document.getElementById("dbAnonKey").value = "";
+            document.getElementById("geminiKeyField").value = "";
+            
+            closeDbSettingsModal();
+            initializeSupabaseConnection();
+            syncAndRefreshAllData();
+            showNotification("Database Disconnected", "Storage mode reverted to Local Device mode.", "info");
+        }
+
+        // Processing form responses and persistent committing
+        async function saveNewTrade() {
+            const date = document.getElementById("tradeDate").value;
+            const time = document.getElementById("tradeTime").value;
+            const day = document.getElementById("tradeDay").value;
+            const pair = document.getElementById("tradePair").value.trim().toUpperCase();
+            const session = document.getElementById("tradeSession").value;
+            const direction = document.getElementById("tradeDirection").value;
+            const lotSize = parseFloat(document.getElementById("tradeLotSize").value) || 0.10;
+            const entryPrice = parseFloat(document.getElementById("tradeEntryPrice").value) || 0;
+            const exitPrice = parseFloat(document.getElementById("tradeExitPrice").value) || 0;
+            const riskReward = parseFloat(document.getElementById("tradeRiskReward").value) || 1.0;
+            const pnl = parseFloat(document.getElementById("tradePnl").value);
+            const emotion = document.getElementById("tradeEmotion").value;
+            const notes = document.getElementById("tradeNotes").value.trim();
+
+            const modalError = document.getElementById("modalError");
+
+            if (!date || !pair || isNaN(pnl)) {
+                modalError.innerText = "Error: Date, Asset Pair, and P&L Amount are mandatory parameters!";
+                modalError.classList.remove("hidden");
+                return;
+            }
+
+            modalError.classList.add("hidden");
+
+            // Build payload
+            const payload = {
+                trader: currentTrader || "Ali",
+                date,
+                time,
+                day,
+                pair,
+                session,
+                direction,
+                lot_size: lotSize,
+                entry_price: entryPrice,
+                exit_price: exitPrice,
+                risk_reward: riskReward,
+                pnl,
+                outcome: pnl >= 0 ? "Win" : "Loss",
+                emotion,
+                notes,
+                screenshot: selectedScreenshotBase64 // Insert screenshot
+            };
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('trades')
+                        .insert([payload]);
+
+                    if (error) throw error;
+
+                    showNotification("Trade Recorded", "Journal entry committed to Supabase Cloud successfully.", "success");
+                    closeLogTradeModal();
+                    fetchSupabaseTrades();
+                } catch(e) {
+                    console.error("Supabase write exception:", e);
+                    showNotification("Cloud Error", "Failed to save to Supabase Cloud. Check your table schemas and policies.", "error");
+                }
+            } else {
+                // Offline local storage saving
+                const localId = "local-" + Date.now();
+                tradesList.push({ id: localId, ...payload });
+                localStorage.setItem("trading_journal_trades", JSON.stringify(tradesList));
+                
+                refreshDashboardAndTable();
+                showNotification("Trade Saved to Device", "Journal entry locked inside your local browser memory.", "success");
+                closeLogTradeModal();
+            }
+        }
+    </script>
+
+    <script>
+        /* Auxiliary Quote Database for Psychology Booster */
+        const proQuotes = [
+            '"The market is a device for transferring money from the impatient to the patient." – Warren Buffett',
+            '"Amateur traders focus on how much they can make. Professional traders focus on how much they can lose." – Jack Schwager',
+            '"Don\'t focus on the money; focus on playing the trading game correctly." – Tom Baldwin',
+            '"Losses are necessary, as long as they teach you how to refine your risk structures." – Mark Douglas',
+            '"Emotional control is not the absence of emotion, but the disciplined commitment to rule compliance." – trading psychology'
+        ];
+
+        setInterval(() => {
+            const el = document.getElementById("psychologyQuoteText");
+            if (el) {
+                const randomQuote = proQuotes[Math.floor(Math.random() * proQuotes.length)];
+                el.innerText = randomQuote;
+            }
+        }, 30000);
+
+        /**
+         * Generic LLM content requester for standard textual queries and image understanding
+         */
+        async function fetchGeminiReport(prompt, base64Image = null) {
+            const activeKey = localStorage.getItem("gemini_api_key") || "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeKey}`;
+
+            const parts = [{ text: prompt }];
+
+            if (base64Image && base64Image.startsWith("data:")) {
+                try {
+                    const partsOfImg = base64Image.split(",");
+                    const mimeType = partsOfImg[0].split(";")[0].split(":")[1];
+                    const base64Data = partsOfImg[1];
+                    parts.push({
+                        inlineData: {
+                            mimeType: mimeType,
+                            data: base64Data
+                        }
+                    });
+                } catch (imgError) {
+                    console.error("Failed to parse base64 inline block", imgError);
+                }
+            }
+
+            const payload = {
+                contents: [{ role: "user", parts: parts }]
+            };
+
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API returned standard error status ${response.status}`);
+            }
+
+            const result = await response.json();
+            const textOutput = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!textOutput) {
+                throw new Error("Invalid or empty response output block structure from LLM");
+            }
+
+            return textOutput;
+        }
+
+        /**
+         * Call the prebuilt speech synthesizer (TTS) through Gemini 2.5 TTS Model
+         */
+        async function fetchGeminiAudio(textPrompt) {
+            const activeKey = localStorage.getItem("gemini_api_key") || "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${activeKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: `Say with supportive, serious trader authority: ${textPrompt}` }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Puck" } // Upbeat voice
+                        }
+                    }
+                }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("Speech generator call failed");
+            }
+
+            const result = await response.json();
+            const part = result?.candidates?.[0]?.content?.parts?.[0];
+            const audioData = part?.inlineData?.data;
+            const mimeType = part?.inlineData?.mimeType;
+
+            if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                
+                const pcmData = base64ToArrayBuffer(audioData);
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, sampleRate);
+                return URL.createObjectURL(wavBlob);
+            } else {
+                throw new Error("Unable to retrieve valid audio stream buffer");
+            }
+        }
+
+        // Helpers for raw PCM output wrapper to WAV structures
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
+            const view = new DataView(buffer);
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcm16.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); // Linear PCM
+            view.setUint16(22, 1, true); // Mono
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true); // Bits per sample
+            writeString(view, 36, 'data');
+            view.setUint32(40, pcm16.length * 2, true);
+
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++, offset += 2) {
+                view.setInt16(offset, pcm16[i], true);
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        /**
+         * Trigger individual trade visual & text audit
+         */
+        async function analyzeIndividualTrade(tradeId) {
+            const targetTrade = tradesList.find(t => t.id === tradeId);
+            if (!targetTrade) {
+                showNotification("Error", "Trade object not located in active memory state.", "error");
+                return;
+            }
+
+            const btn = document.getElementById(`btn-audit-${tradeId}`);
+            const textPanel = document.getElementById(`ai-response-${tradeId}`);
+            const audioPanel = document.getElementById(`ai-audio-panel-${tradeId}`);
+
+            if (btn) btn.disabled = true;
+            textPanel.innerText = "Connecting to Gemini AI server... Examining technical parameters and chart confluences...";
+
+            // Construct structured request prompt
+            const queryPrompt = `
+                Act as a master proprietary risk manager. Analyze this individual trade:
+                Asset: ${targetTrade.pair} | Direction: ${targetTrade.direction}
+                Session: ${targetTrade.session} | Day: ${targetTrade.day}
+                P&L Outcome: $${targetTrade.pnl} (${targetTrade.pnl >= 0 ? 'WIN' : 'LOSS'})
+                Stated Psychology/Emotion: ${targetTrade.emotion}
+                Trader Strategy Notes: "${targetTrade.notes || 'None logged'}"
+                
+                Please provide:
+                1. TECHNICAL RATING: 1-10 rating on trade setup details.
+                2. PSYCHOLOGY AUDIT: Comment on the trader's mental state (${targetTrade.emotion}) and whether it caused bad behavior.
+                3. ACTIONS: 2 crisp bullet points of technical or behavioral advice.
+                Keep the feedback short, punchy, professional, and trading-focused.
+            `;
+
+            try {
+                const screenshotBase64 = targetTrade.screenshot && targetTrade.screenshot.startsWith("data:") ? targetTrade.screenshot : null;
+                const feedbackText = await fetchGeminiReport(queryPrompt, screenshotBase64);
+                
+                textPanel.innerText = feedbackText;
+                
+                // Store feedback text as attributes to enable TTS conversion
+                textPanel.setAttribute("data-raw-feedback", feedbackText.replace(/[\*\#\>\-]/g, ""));
+                
+                if (audioPanel) audioPanel.classList.remove("hidden");
+                showNotification("Analysis Completed", "Vision & Setup metrics processed by Gemini AI.", "success");
+            } catch (error) {
+                console.error("Gemini individual audit failed:", error);
+                textPanel.innerText = "Error linking with Gemini AI. Ensure you have configured a valid API Key in the settings page and that your network supports Generative endpoints.";
+                showNotification("AI Offline", "Configure a Gemini Key to use vision features.", "error");
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        /**
+         * Synthesize specific feedback element text to TTS voice output
+         */
+        async function speakResponseText(tradeId) {
+            const textPanel = document.getElementById(`ai-response-${tradeId}`);
+            const loadingIndicator = document.getElementById(`audio-loading-${tradeId}`);
+            const cleanText = textPanel.getAttribute("data-raw-feedback") || textPanel.innerText;
+
+            if (loadingIndicator) loadingIndicator.classList.remove("hidden");
+
+            try {
+                if (activeAudioUrl) {
+                    URL.revokeObjectURL(activeAudioUrl);
+                }
+
+                const audioUrl = await fetchGeminiAudio(cleanText.substring(0, 350));
+                activeAudioUrl = audioUrl;
+
+                const globalPlayer = document.getElementById("geminiAudioPlayer");
+                const voiceTray = document.getElementById("aiVoiceTray");
+
+                if (globalPlayer && voiceTray) {
+                    globalPlayer.src = audioUrl;
+                    voiceTray.classList.remove("hidden");
+                    globalPlayer.play();
+                }
+                showNotification("Audio Ready", "Speech compiled successfully.", "success");
+            } catch (err) {
+                console.error("Failed to generate speech segment:", err);
+                showNotification("Audio Failed", "Speech synthesis could not complete.", "error");
+            } finally {
+                if (loadingIndicator) loadingIndicator.classList.add("hidden");
+            }
+        }
+
+        /**
+         * AI Chat terminal methods for real-time portfolio audits & interactive help
+         */
+        function appendChatMessage(sender, text, isAi = false) {
+            const stream = document.getElementById("aiChatStream");
+            if (!stream) return;
+
+            const row = document.createElement("div");
+            row.className = "flex gap-2.5 items-start animate-fade-in";
+            
+            row.innerHTML = `
+                <div class="w-7 h-7 rounded-full ${isAi ? 'bg-indigo-950 border border-indigo-500/30' : 'bg-slate-800 border border-slate-600'} flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid ${isAi ? 'fa-robot text-indigo-400' : 'fa-user text-slate-300'} text-xs"></i>
+                </div>
+                <div class="${isAi ? 'bg-[#1C2030] border border-[#2A2E39]' : 'bg-indigo-900/30 border border-indigo-500/10'} p-3 rounded-xl rounded-tl-none max-w-[85%]">
+                    <span class="block text-[9px] text-slate-500 uppercase tracking-wider font-bold mb-1">${sender}</span>
+                    <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line select-text">${text}</p>
+                </div>
+            `;
+            stream.appendChild(row);
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById("aiChatInput");
+            const btn = document.getElementById("btn-send-chat");
+            const textVal = input.value.trim();
+
+            if (!textVal) return;
+
+            appendChatMessage(currentTrader || "Trader", textVal, false);
+            input.value = "";
+
+            if (btn) btn.disabled = true;
+
+            // Context Injector
+            let portfolioContext = "";
+            if (tradesList.length > 0) {
+                const sampleTrades = tradesList.slice(-5).map(t => `${t.pair} (${t.direction}) session ${t.session} outcome ${t.pnl >= 0 ? 'WIN' : 'LOSS'} feeling ${t.emotion}`);
+                portfolioContext = `Current context: There are ${tradesList.length} total trades in the journal. Recent trades: [${sampleTrades.join("; ")}].`;
+            }
+
+            const activePrompt = `
+                You are a supportive, high-level proprietary trading psychology & technical coach.
+                ${portfolioContext}
+                The user asks: "${textVal}"
+                Give a professional, brief, motivational response under 3-4 sentences in Hindi/Urdu mixed with English (roman-urdu/hinglish style), keeping it highly actionable.
+            `;
+
+            try {
+                const aiAnswer = await fetchGeminiReport(activePrompt);
+                appendChatMessage("Gemini Coach", aiAnswer, true);
+                
+                // Keep history updated
+                aiChatHistory.push({ role: "user", parts: [{ text: textVal }] });
+                aiChatHistory.push({ role: "model", parts: [{ text: aiAnswer }] });
+            } catch (err) {
+                console.error("Chat failure:", err);
+                appendChatMessage("System Diagnostic", "Could not complete link request. Please verify your Gemini API key in Database Settings panel.", true);
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        /**
+         * Generate a comprehensive 1-2 Month portfolio diagnostics summary
+         */
+        async function generatePortfolioAudit() {
+            if (tradesList.length === 0) {
+                showNotification("No Data Available", "Please log or seed some trades before running the strategic audit.", "info");
+                return;
+            }
+
+            const btn = document.getElementById("btn-portfolio-audit");
+            if (btn) btn.innerHTML = `<span><i class="fa-solid fa-circle-notch animate-spin mr-1.5"></i> Compiling...</span>`;
+
+            // Prepare serialized metrics structure
+            const totalProfit = tradesList.reduce((sum, t) => sum + (parseFloat(t.pnl) || 0), 0);
+            const totalTrades = tradesList.length;
+            const wins = tradesList.filter(t => t.pnl >= 0).length;
+            const winRate = ((wins / totalTrades) * 100).toFixed(1);
+            
+            const pairsLogged = [...new Set(tradesList.map(t => t.pair))];
+            const emotionsLogged = [...new Set(tradesList.map(t => t.emotion))];
+
+            const summaryPrompt = `
+                Perform a high-level strategic audit on Ali and Nabeel's trading journal portfolio.
+                Metrics Snapshot:
+                - Total Recorded Trades: ${totalTrades}
+                - Net Combined P&L: $${totalProfit.toFixed(2)}
+                - Win Rate: ${winRate}%
+                - Assets Monitored: ${pairsLogged.join(", ")}
+                - Emotional States Tracked: ${emotionsLogged.join(", ")}
+                
+                Provide a structured report containing:
+                1. PERFORMANCE GRADE (A, B, C, D, or F) with a quick justification.
+                2. WINNING TRAPS: Identify if bad emotions (Revenge, FOMO, Greed) are ruining profits.
+                3. GOLDEN RULE: One central, customized technical advice rule for the next 30 days.
+                
+                Respond in friendly roman-urdu/hinglish style that excites and motivates young professional traders!
+            `;
+
+            try {
+                const auditResponse = await fetchGeminiReport(summaryPrompt);
+                appendChatMessage("Gemini Strategy Audit", auditResponse, true);
+            } catch (err) {
+                console.error("Diagnostics compile failed:", err);
+                appendChatMessage("Diagnostics Error", "Authentication error. Ensure you have pasted your valid API key inside Settings.", true);
+            } finally {
+                if (btn) btn.innerHTML = `<span><i class="fa-solid fa-chart-line mr-1.5"></i> Run 1-2 Month Audit</span>`;
+            }
+        }
+
+        /**
+         * Quick psychology checkpoint action
+         */
+        async function triggerPsychologyCheck() {
+            if (tradesList.length === 0) {
+                showNotification("Empty Logs", "Add logs first to test psychology traits.", "info");
+                return;
+            }
+
+            const fomoCount = tradesList.filter(t => t.emotion === 'FOMO').length;
+            const greedCount = tradesList.filter(t => t.emotion === 'Greed').length;
+            const revengeCount = tradesList.filter(t => t.emotion === 'Revenge').length;
+
+            appendChatMessage("Mental Health Check", "Scanning emotional triggers across historical records...", true);
+
+            const checkPrompt = `
+                Quick trade mindset analysis:
+                Trader logs indicate: ${fomoCount} FOMO entry mistakes, ${greedCount} Greed size errors, and ${revengeCount} revenge positions.
+                Provide a quick, sharp, motivational voice-style rule (2 short sentences) to reset their discipline immediately. Speak directly to Ali and Nabeel.
+            `;
+
+            try {
+                const psychRule = await fetchGeminiReport(checkPrompt);
+                appendChatMessage("Gemini Psychology Coach", psychRule, true);
+            } catch (err) {
+                console.error("Psychology analysis failed:", err);
+            }
+        }
+
+        // UI Toast Notifications Handler
+        function showNotification(title, message, type = "info") {
+            const toast = document.getElementById("notificationToast");
+            const toastIconContainer = document.getElementById("toastIconContainer");
+            const toastIcon = document.getElementById("toastIcon");
+            const toastTitle = document.getElementById("toastTitle");
+            const toastMessage = document.getElementById("toastMessage");
+
+            // Setup type stylings
+            if (type === "success") {
+                toastIconContainer.className = "p-2 rounded-xl text-white bg-emerald-500 shadow-lg shadow-emerald-950/45";
+                toastIcon.className = "fa-solid fa-circle-check";
+            } else if (type === "error") {
+                toastIconContainer.className = "p-2 rounded-xl text-white bg-rose-500 shadow-lg shadow-rose-950/45";
+                toastIcon.className = "fa-solid fa-triangle-exclamation";
+            } else {
+                toastIconContainer.className = "p-2 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-950/45";
+                toastIcon.className = "fa-solid fa-circle-info";
+            }
+
+            toastTitle.innerText = title;
+            toastMessage.innerText = message;
+
+            // Trigger animations
+            toast.className = "fixed bottom-6 right-6 z-50 transform translate-y-0 opacity-100 transition-all duration-300 max-w-sm bg-[#131722] border border-[#2A2E39] p-4 rounded-2xl flex items-start gap-3 shadow-2xl";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm bg-[#131722] border border-[#2A2E39] p-4 rounded-2xl flex items-start gap-3 shadow-2xl pointer-events-none";
+            }, 4500);
+        }
+    </script>
+</body>
+</html>
