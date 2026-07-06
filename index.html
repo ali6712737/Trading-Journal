@@ -1,537 +1,281 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0B0E14]">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ali & Nabeel Prop Journal - EdgeLog AI</title>
-    
-    <!-- Tailwind CSS for modern responsive styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome Icons for visual indicators -->
+    <title>Alpha Edge | Alpha Trading Journal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js CDN for Interactive Trading Metrics -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Supabase JS Client library for real-time cloud database syncing -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Google Font 'Inter' for premium readability -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B0E11;
+            color: #E2E8F0;
         }
-        /* Custom scrollbar to match premium TradingView dark mode theme */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #131722;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2A2E39;
-            border-radius: 8px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #2962FF;
-        }
-        /* Neon Glow Utility classes */
-        .glow-green {
-            box-shadow: 0 0 15px rgba(8, 153, 129, 0.15);
-        }
-        .glow-red {
-            box-shadow: 0 0 15px rgba(242, 54, 69, 0.15);
-        }
-        .glow-blue {
-            box-shadow: 0 0 20px rgba(41, 98, 255, 0.2);
+        .glow-green:hover { box-shadow: 0 0 15px rgba(0, 230, 118, 0.4); }
+        .glow-blue { box-shadow: 0 0 20px rgba(0, 184, 212, 0.2); }
+        .trading-bg {
+            background-image: linear-gradient(rgba(11, 14, 17, 0.95), rgba(11, 14, 17, 0.95)), url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
         }
     </style>
 </head>
-<body class="h-full text-slate-200 antialiased flex flex-col justify-between">
+<body class="trading-bg min-h-screen flex flex-col justify-between">
 
-    <!-- PRIVATE LOGIN PORTAL (Displayed by default to protect Ali and Nabeel's trading logs) -->
-    <div id="loginPortal" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0B0E14] px-4">
-        <div class="absolute inset-0 bg-radial-at-t from-indigo-950/20 via-transparent to-transparent pointer-events-none"></div>
-        <div class="bg-[#131722] border border-[#2A2E39] w-full max-w-md rounded-2xl p-8 glow-blue relative">
-            <div class="text-center space-y-3 mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-950/50">
-                    <i class="fa-solid fa-chart-line text-2xl"></i>
+    <!-- LOGIN SCREEN OVERLAY -->
+    <div id="loginScreen" class="fixed inset-0 bg-[#0B0E11] z-50 flex items-center justify-center p-4">
+        <div class="bg-[#151A22] border border-[#262F3D] rounded-2xl w-full max-w-md p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#00B8D4]/10 rounded-full blur-2xl"></div>
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#00B8D4]/10 text-[#00B8D4] text-2xl mb-4 border border-[#00B8D4]/20">
+                    <i class="fa-solid flex fa-chart-line"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-white tracking-tight">Ali & Nabeel Journal</h2>
-                <p class="text-xs text-slate-400">Exclusive prop-trading journal access shield. Access code required.</p>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Alpha Edge Vault</h1>
+                <p class="text-sm text-gray-400 mt-1">Exclusive Internal Trading Sync Terminal</p>
             </div>
 
-            <!-- Login Input Form -->
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Select Trader Identity</label>
-                    <select id="loginTrader" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 font-semibold transition">
-                        <option value="Ali">Ali</option>
-                        <option value="Nabeel">Nabeel</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Secret Access Passcode</label>
-                    <div class="relative">
-                        <input id="loginPasscode" type="password" placeholder="••••••••" onkeydown="if(event.key === 'Enter') attemptLogin()" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 tracking-widest transition">
-                        <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500"></i>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Select Identity</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="selectUser('Ali')" id="btnAli" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer">
+                            <i class="fa-solid fa-user-crown text-[#00E676] text-xs"></i> Ali
+                        </button>
+                        <button onclick="selectUser('Nabeel')" id="btnNabeel" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer">
+                            <i class="fa-solid fa-user-shield text-[#00E676] text-xs"></i> Nabeel
+                        </button>
                     </div>
                 </div>
-                <button onclick="attemptLogin()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-sm font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-950/60 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-shield-halved"></i> Unlock Dashboard
-                </button>
-                <div id="loginError" class="hidden text-center text-xs text-rose-400 bg-rose-950/40 border border-rose-500/20 py-2.5 rounded-lg font-medium">
-                    <i class="fa-solid fa-triangle-exclamation mr-1.5 animate-bounce"></i> Incorrect secret passcode. Try again!
-                </div>
-            </div>
 
-            <div class="text-center mt-8 text-[10px] text-slate-500">
-                System protected by cloud client-side security standards. Secure passcode: <span class="font-mono text-slate-600">TRADE786</span>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Secure Passcode</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                            <i class="fa-solid fa-lock-keyhole"></i>
+                        </span>
+                        <input type="password" id="passcodeField" placeholder="••••••••" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl py-3 pl-10 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#00B8D4] transition text-center tracking-widest">
+                    </div>
+                </div>
+
+                <div id="loginError" class="text-center text-xs font-medium text-red-400 hidden bg-red-500/10 py-2 rounded-lg border border-red-500/20">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Invalid access authorization key!
+                </div>
+
+                <button onclick="attemptLogin()" class="w-full bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-bold py-3.5 rounded-xl shadow-lg cursor-pointer transform hover:-translate-y-0.5 transition duration-150 glow-green mt-2">
+                    Initialize Terminal Session <i class="fa-solid fa-right-to-bracket ml-1"></i>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APPLICATION CONTAINER (Initially hidden until successfully authenticated) -->
-    <div id="mainDashboard" class="hidden flex-1 flex flex-col justify-between">
-        
-        <!-- HEADER ELEMENT -->
-        <header class="bg-[#131722] border-b border-[#2A2E39] sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between flex-wrap gap-4">
-                
-                <!-- Logo & Database Sync Status -->
+    <!-- MAIN APPARATUS INTERFACE -->
+    <div id="mainDashboard" class="hidden flex-grow flex flex-col">
+        <!-- TOP NAVIGATION APEX -->
+        <header class="bg-[#11161F] border-b border-[#222C3B] px-6 py-4 sticky top-0 z-40 shadow-md">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white font-bold text-lg shadow shadow-emerald-950">
-                        <i class="fa-solid fa-bolt"></i>
+                    <div class="w-10 h-10 bg-[#00B8D4]/10 border border-[#00B8D4]/30 rounded-xl flex items-center justify-center text-[#00B8D4] font-black text-lg">
+                        Α
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-sm font-extrabold text-white tracking-wider uppercase">EdgeLog AI</h1>
-                            <span class="text-[9px] bg-emerald-950 text-emerald-400 font-bold px-1.5 py-0.5 rounded border border-emerald-800">PRO</span>
+                        <h2 class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                            ALPHA EDGE <span class="text-xs bg-gradient-to-r from-[#00B8D4] to-[#00E676] text-black px-2 py-0.5 font-extrabold rounded">PRO</span>
+                        </h2>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs text-gray-400">Operator: <span id="displayUser" class="text-[#00E676] font-semibold">Ali</span></span>
+                            <span class="inline-block w-1 h-1 bg-gray-600 rounded-full"></span>
+                            <span onclick="openSettingsModal()" class="text-xs text-gray-400 hover:text-white cursor-pointer flex items-center gap-1">
+                                <span id="syncBadge" class="w-2 h-2 rounded-full bg-yellow-500 inline-block animate-pulse"></span> 
+                                <span id="syncBadgeText">Device Local Mode</span>
+                            </span>
                         </div>
-                        <p class="text-[10px] text-slate-500 font-medium flex items-center gap-1.5">
-                            <span id="syncStatusBadge" class="inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                            <span id="syncStatusText" class="cursor-pointer hover:text-indigo-400 underline transition" onclick="openDbSettingsModal()">Device Storage (Local)</span>
-                        </p>
                     </div>
                 </div>
 
-                <!-- Live Performance Greeting & Dynamic Controls -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-[#1C2030] px-3.5 py-1.5 rounded-xl border border-[#2A2E39] text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-circle-user text-indigo-400"></i>
-                        <span class="text-slate-400">Active Identity:</span>
-                        <span id="activeUserLabel" class="text-white font-bold uppercase tracking-wide">Ali</span>
-                    </div>
-
-                    <button onclick="openLogTradeModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold py-2 px-4 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-950 transition">
-                        <i class="fa-solid fa-pen-nib"></i> Record Trade
+                <!-- QUICK ACTIONS -->
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                    <button onclick="openSettingsModal()" class="bg-[#1C2430] border border-[#262F3D] hover:bg-[#222C3B] text-gray-300 font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-database text-yellow-500"></i> Setup Cloud / DB
                     </button>
-
-                    <button onclick="openDbSettingsModal()" class="bg-[#1C2030] hover:bg-[#2A2E39] text-slate-300 border border-[#2A2E39] text-xs font-bold py-2 px-3 rounded-xl transition" title="Cloud Database Settings">
-                        <i class="fa-solid fa-database"></i> Setup DB
+                    <button onclick="openRecordModal()" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-extrabold px-5 py-2 rounded-xl text-sm flex items-center gap-2 transition glow-green shadow-lg cursor-pointer">
+                        <i class="fa-solid fa-circle-plus"></i> Record Trade Log
                     </button>
-
-                    <button onclick="logout()" class="bg-rose-950/50 hover:bg-rose-950 border border-rose-900/40 text-rose-400 hover:text-rose-300 p-2 rounded-xl text-xs transition" title="Logout Permanently">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+                    <button onclick="logoutSession()" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition cursor-pointer" title="Disconnect Terminal">
+                        <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
-
             </div>
         </header>
 
-        <!-- DASHBOARD CONTAINER AND GRIDS -->
-        <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- MAIN EXECUTIVE DASHBOARD VIEW -->
+        <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex-grow">
             
-            <!-- STAGE 1: PORTFOLIO EXECUTIVE METRICS BAR -->
-            <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <!-- Cumulative P&L Card -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl glow-blue relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full pointer-events-none"></div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Total Net Balance</span>
-                    <h3 id="statNetPnl" class="text-2xl font-black text-slate-100">$0.00</h3>
-                    <div id="statNetPnlTrend" class="text-[10px] font-medium mt-1 text-slate-500 flex items-center gap-1">
-                        <i class="fa-solid fa-calculator"></i> Cumulative earnings
-                    </div>
+            <!-- MOTIVATIONAL SYNC CARD -->
+            <div class="bg-gradient-to-r from-[#151A22] to-[#11161F] border border-[#222C3B] rounded-2xl p-5 flex items-start gap-4 relative overflow-hidden shadow-lg">
+                <div class="text-[#00B8D4] text-xl bg-[#00B8D4]/10 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-[#00B8D4]/20">
+                    <i class="fa-solid fa-brain-circuit"></i>
                 </div>
-
-                <!-- Win Rate Card -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full pointer-events-none"></div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Win Rate Indicator</span>
-                    <h3 id="statWinRate" class="text-2xl font-black text-slate-100">0%</h3>
-                    <div id="statWinRateBar" class="w-full bg-[#1C2030] h-1.5 rounded-full mt-2.5 overflow-hidden">
-                        <div id="statWinRateFill" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full w-0 transition-all duration-500"></div>
-                    </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-[#00B8D4]">Psychology Protocol / Quote of the Session</h4>
+                    <p id="motivationalQuote" class="text-sm text-gray-300 mt-1 font-medium italic">"The market is a device for transferring money from the impatient to the patient." – Warren Buffett</p>
                 </div>
+                <button onclick="rotateQuote()" class="ml-auto text-gray-500 hover:text-gray-300 text-xs self-center p-2 cursor-pointer transition">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
 
-                <!-- Total Trades Logged -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Registered Trades</span>
-                    <h3 id="statTotalTrades" class="text-2xl font-black text-slate-100">0</h3>
-                    <div id="statTraderSplit" class="text-[10px] text-slate-400 mt-2 flex justify-between font-mono">
-                        <span>Ali: 0</span>
-                        <span>Nabeel: 0</span>
-                    </div>
+            <!-- ANALYTICS INSIGHT MATRIX (1-2 MONTH ENGINE) -->
+            <section class="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Actions</span>
+                    <span id="statTotalTrades" class="text-2xl font-black text-white mt-2">0</span>
+                    <span class="text-[10px] text-gray-500 mt-1 block">Full compiled log size</span>
                 </div>
-
-                <!-- Profit Factor (Ratio of Gross Wins vs Gross Losses) -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-5 rounded-2xl relative overflow-hidden">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider block mb-1">Profit Factor (P.F)</span>
-                    <h3 id="statProfitFactor" class="text-2xl font-black text-slate-100">0.00</h3>
-                    <p class="text-[10px] text-slate-500 mt-2 font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-scale-balanced text-indigo-400"></i> Gross gains to risk index
-                    </p>
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Edge Win Rate</span>
+                    <span id="statWinRate" class="text-2xl font-black text-[#00E676] mt-2">0%</span>
+                    <span class="text-[10px] text-gray-500 mt-1 block">Statistical hit ratio</span>
                 </div>
-            </section>
-
-            <!-- STAGE 2: 1-2 MONTH DYNAMIC DIAGNOSTIC CARDS (Custom Summary Rules) -->
-            <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                
-                <!-- Best Session Insight -->
-                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                        <i class="fa-solid fa-clock text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Golden Session</span>
-                        <span id="bestSessionText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
-                        <span class="text-[9px] text-indigo-400">Optimal setup environment</span>
-                    </div>
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Net Yield (P&L)</span>
+                    <span id="statNetPnL" class="text-2xl font-black text-white mt-2">$0.00</span>
+                    <span id="statNetPnLSub" class="text-[10px] text-gray-500 mt-1 block">Accumulated earnings</span>
                 </div>
-
-                <!-- Best Trend / Direction Insight -->
-                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <i class="fa-solid fa-arrows-up-down text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Core Directional Bias</span>
-                        <span id="bestDirectionText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
-                        <span class="text-[9px] text-emerald-400">Highest win rate structure</span>
-                    </div>
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm border-l-2 border-l-[#00B8D4]">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Best Session</span>
+                    <span id="statBestSession" class="text-xl font-bold text-white mt-2">N/A</span>
+                    <span class="text-[10px] text-[#00B8D4] font-medium mt-1 block">Highest strike zone</span>
                 </div>
-
-                <!-- Optimal Operational Weekday -->
-                <div class="bg-[#1C2030]/50 border border-[#2A2E39]/80 rounded-xl p-4 flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                        <i class="fa-solid fa-calendar-day text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase block">Best Trading Day</span>
-                        <span id="bestDayText" class="text-xs text-white font-extrabold block">No Data Analyzed</span>
-                        <span class="text-[9px] text-amber-400">Discipline compliance high</span>
-                    </div>
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm border-l-2 border-l-[#00E676]">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Best Trading Day</span>
+                    <span id="statBestDay" class="text-xl font-bold text-white mt-2">N/A</span>
+                    <span class="text-[10px] text-[#00E676] font-medium mt-1 block">Optimal day profile</span>
                 </div>
-
-                <!-- Mental Tax Index (Loss to emotional trades) -->
-                <div class="bg-[#1C2030]/50 border border-rose-500/10 rounded-xl p-4 flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-rose-950/60 border border-rose-500/20 flex items-center justify-center text-rose-400">
-                        <i class="fa-solid fa-brain text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase block">FOMO/Greed Est. Loss</span>
-                        <span id="mentalTaxText" class="text-xs text-rose-400 font-extrabold block">$0.00</span>
-                        <span class="text-[9px] text-slate-500">Unforced psychological errors</span>
-                    </div>
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-xl p-4 flex flex-col justify-between shadow-sm border-l-2 border-l-purple-500">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Best Trade Type</span>
+                    <span id="statBestDirection" class="text-xl font-bold text-white mt-2">N/A</span>
+                    <span class="text-[10px] text-purple-400 font-medium mt-1 block">Long vs Short edge</span>
                 </div>
             </section>
 
-            <!-- STAGE 3: INTERACTIVE PORTFOLIO CHARTS -->
+            <!-- ANALYTICS ENGINE CHARTS DATA VISUALIZATION -->
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Cumulative Capital curve chart -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-6 rounded-2xl lg:col-span-2 space-y-4">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <div>
-                            <span class="text-[10px] text-slate-500 uppercase tracking-wider font-extrabold">Capital Performance Graph</span>
-                            <h4 class="text-xs font-bold text-white">Cumulative Account Equity Curve ($ Output)</h4>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="inline-block w-2.5 h-2.5 rounded bg-blue-500"></span>
-                            <span class="text-[10px] text-slate-400 font-medium">Growth line</span>
-                        </div>
+                <!-- ACCUMULATED CAPITAL CURVE LINE CHART -->
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-2xl p-5 shadow-md lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-area text-[#00B8D4]"></i> 1-2 Months Cumulative Growth Projection
+                        </h3>
+                        <span class="text-xs text-gray-500">Dynamic Capital Delta</span>
                     </div>
-                    <div class="h-64">
-                        <canvas id="capitalCurveChart"></canvas>
+                    <div class="h-64 relative">
+                        <canvas id="pnlLineChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Session and day volume statistics -->
-                <div class="bg-[#131722] border border-[#2A2E39] p-6 rounded-2xl space-y-4">
-                    <div>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-extrabold">Active Sessions Rating</span>
-                        <h4 class="text-xs font-bold text-white">Win vs Loss Volume by Session Block</h4>
+                <!-- SESSION METRICS BREAKDOWN BAR CHART -->
+                <div class="bg-[#151A22] border border-[#222C3B] rounded-2xl p-5 shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-[#00E676]"></i> Session Volume Breakdown
+                        </h3>
+                        <span class="text-xs text-gray-500">Efficiency Index</span>
                     </div>
-                    <div class="h-64">
+                    <div class="h-64 relative">
                         <canvas id="sessionBarChart"></canvas>
                     </div>
                 </div>
             </section>
 
-            <!-- STAGE 4: ADVANCED DATA FILTERS & INTERACTIVE LEDGER TABLE -->
-            <section class="bg-[#131722] border border-[#2A2E39] rounded-2xl overflow-hidden shadow-xl">
-                
-                <!-- Filters panel -->
-                <div class="bg-[#1C2030] px-6 py-4 border-b border-[#2A2E39] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h4 class="text-sm font-black text-white flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-indigo-400"></i> Ali & Nabeel Live Shared Ledger
-                        </h4>
-                        <p class="text-[10px] text-slate-500 font-medium">Filtered data displays descending chronology logs.</p>
+            <!-- TRADING LEDGER RECORD HEADQUARTERS -->
+            <section class="bg-[#151A22] border border-[#222C3B] rounded-2xl shadow-md overflow-hidden">
+                <!-- FILTER UTILITY DECK -->
+                <div class="p-5 border-b border-[#222C3B] bg-[#11161F] flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-filter text-gray-500 text-sm"></i>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-white">Execution Logs / History Matrix</h3>
                     </div>
-
-                    <!-- Multi Filters block -->
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                        <!-- Trader selector -->
-                        <select id="filterTrader" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
-                            <option value="All">All Traders</option>
+                    <div class="grid grid-cols-2 md:flex items-center gap-3">
+                        <select id="filterTrader" onchange="applyFilters()" class="bg-[#1C2430] border border-[#262F3D] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00B8D4]">
+                            <option value="ALL">All Operators</option>
                             <option value="Ali">Ali Only</option>
                             <option value="Nabeel">Nabeel Only</option>
                         </select>
-                        <!-- Session block -->
-                        <select id="filterSession" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
-                            <option value="All">All Sessions</option>
-                            <option value="London">London Block</option>
-                            <option value="New York">New York Block</option>
-                            <option value="Asian">Asian (Tokyo)</option>
+                        <select id="filterSession" onchange="applyFilters()" class="bg-[#1C2430] border border-[#262F3D] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00B8D4]">
+                            <option value="ALL">All Sessions</option>
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                            <option value="Asian">Asian</option>
                         </select>
-                        <!-- Setup type direction -->
-                        <select id="filterDirection" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
-                            <option value="All">All Directions</option>
-                            <option value="Long">Long Setup</option>
-                            <option value="Short">Short Setup</option>
-                        </select>
-                        <!-- Psychology Emotion -->
-                        <select id="filterEmotion" onchange="refreshDashboardAndTable()" class="bg-[#131722] border border-[#2A2E39] text-[11px] text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 font-medium">
-                            <option value="All">All Mindsets</option>
-                            <option value="Calm">Calm & Rule-Compliant</option>
-                            <option value="FOMO">FOMO / Over-Trade</option>
-                            <option value="Greed">Greed / Large size</option>
-                            <option value="Fear">Fear / Early Exit</option>
-                            <option value="Revenge">Revenge / Gussa</option>
+                        <select id="filterOutcome" onchange="applyFilters()" class="bg-[#1C2430] border border-[#262F3D] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00B8D4]">
+                            <option value="ALL">All Outcomes</option>
+                            <option value="WIN">Wins Only</option>
+                            <option value="LOSS">Losses Only</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Scrollable Ledger Table viewport -->
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full text-left border-collapse min-w-[900px]">
+                <!-- LEDGER TABLE RESPONSIVE WRAPPER -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-[#171B26] text-slate-400 text-[10px] uppercase tracking-wider border-b border-[#2A2E39] font-black">
-                                <th class="py-3 px-4">Date & Time</th>
-                                <th class="py-3 px-4">Trader</th>
-                                <th class="py-3 px-4">Pair / Asset</th>
-                                <th class="py-3 px-4">Direction</th>
-                                <th class="py-3 px-4">Session</th>
-                                <th class="py-3 px-4">Lots</th>
-                                <th class="py-3 px-4">Risk:Reward</th>
-                                <th class="py-3 px-4">P&L ($ Amount)</th>
-                                <th class="py-3 px-4">Outcome</th>
-                                <th class="py-3 px-4">Mindset</th>
-                                <th class="py-3 px-4 text-center">Action</th>
+                            <tr class="bg-[#11161F]/50 border-b border-[#222C3B] text-[10px] uppercase tracking-widest text-gray-400 font-bold">
+                                <th class="p-4">Schedule / Date</th>
+                                <th class="p-4">Trader</th>
+                                <th class="p-4">Asset Pair</th>
+                                <th class="p-4">Side</th>
+                                <th class="p-4">Session Matrix</th>
+                                <th class="p-4">Metrics (Lot/R:R)</th>
+                                <th class="p-4 text-right">Net Return (P&L)</th>
+                                <th class="p-4 text-center">Status</th>
+                                <th class="p-4 text-center">Mindset/Emotion</th>
+                                <th class="p-4 text-center">Purge</th>
                             </tr>
                         </thead>
-                        <tbody id="tradesTableBody" class="text-xs divide-y divide-[#2A2E39]/10">
-                            <!-- Injected dynamically by JavaScript -->
+                        <tbody id="tradesTableBody" class="text-xs divide-y divide-[#222C3B]/40">
+                            <!-- Injected Dynamically by System JavaScript Engine -->
                         </tbody>
                     </table>
                 </div>
             </section>
-
-            <!-- STAGE 5: INTEGRATED AI PROP COACH & TEXT TO SPEECH (TTS) TERMINAL -->
-            <section id="aiTerminalContainer" class="bg-[#131722] border border-[#2A2E39] rounded-2xl overflow-hidden shadow-2xl glow-blue grid grid-cols-1 lg:grid-cols-3">
-                
-                <!-- Left panel diagnostics and voice panel -->
-                <div class="p-6 bg-[#1C2030]/60 border-r border-[#2A2E39] flex flex-col justify-between space-y-4">
-                    <div>
-                        <div class="flex items-center gap-2.5 mb-3">
-                            <i class="fa-solid fa-robot text-2xl text-indigo-400 animate-pulse"></i>
-                            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Gemini AI Prop Coach</h4>
-                        </div>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">
-                            This AI parses your active journal database, identifies operational anomalies, psychological biases, and compiles detailed tactical guidelines.
-                        </p>
-                        
-                        <!-- Quick strategic diagnostics actions -->
-                        <div class="mt-4 space-y-2">
-                            <button onclick="generatePortfolioAudit()" id="btn-portfolio-audit" class="w-full bg-indigo-950/60 border border-indigo-500/30 hover:border-indigo-500 hover:bg-indigo-950 text-indigo-300 text-[11px] font-bold py-2.5 px-3 rounded-xl flex items-center justify-between transition">
-                                <span><i class="fa-solid fa-chart-line mr-1.5"></i> Run 1-2 Month Audit</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                            <button onclick="triggerPsychologyCheck()" class="w-full bg-[#171B26]/60 border border-[#2A2E39] hover:border-indigo-500/30 text-slate-300 text-[11px] font-bold py-2.5 px-3 rounded-xl flex items-center justify-between transition">
-                                <span><i class="fa-solid fa-brain mr-1.5"></i> Analyze Discipline/FOMO</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Voice reminder box -->
-                    <div class="bg-indigo-950/20 border border-indigo-500/10 p-3.5 rounded-xl text-center">
-                        <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">PRO PSYCHOLOGY REMINDER</span>
-                        <p id="psychologyQuoteText" class="text-[10px] text-slate-300 italic">"The market is a device for transferring money from the impatient to the patient." – Warren Buffett</p>
-                    </div>
-                </div>
-
-                <!-- Right panel live terminal log and chat stream -->
-                <div class="lg:col-span-2 flex flex-col h-[400px] justify-between bg-[#131722]/40">
-                    <!-- Chat window stream display -->
-                    <div id="aiChatStream" class="p-6 overflow-y-auto space-y-4 flex-1">
-                        <div class="flex gap-2.5 items-start">
-                            <div class="w-7 h-7 rounded-full bg-indigo-950 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-robot text-indigo-400 text-xs"></i>
-                            </div>
-                            <div class="bg-[#1C2030] p-3 rounded-xl rounded-tl-none max-w-[85%] border border-[#2A2E39]">
-                                <p class="text-xs text-slate-300 leading-relaxed">
-                                    Welcome Ali & Nabeel! I am your proprietary trading coach. Drop a query below or click a diagnostics action on the left to review your performance metrics.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Voice output player tray -->
-                    <div id="aiVoiceTray" class="hidden px-6 py-2 bg-indigo-950/40 border-t border-indigo-500/10 flex items-center justify-between gap-3 text-xs text-indigo-300">
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-headphones text-indigo-400 animate-bounce"></i>
-                            <span>AI Coach Guidance Audio is ready to play.</span>
-                        </div>
-                        <audio id="geminiAudioPlayer" class="h-6" controls></audio>
-                    </div>
-
-                    <!-- User input console drawer -->
-                    <div class="p-4 bg-[#1C2030] border-t border-[#2A2E39] flex gap-2 items-center">
-                        <input id="aiChatInput" type="text" placeholder="Type strategy question (e.g. 'How can I fix my FOMO during NY session?')..." onkeydown="if(event.key === 'Enter') sendChatMessage()" class="flex-1 bg-[#131722] border border-[#2A2E39] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        <button onclick="sendChatMessage()" id="btn-send-chat" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-md shadow-indigo-950 flex items-center gap-1.5">
-                            <i class="fa-solid fa-paper-plane"></i> Send
-                        </button>
-                    </div>
-                </div>
-
-            </section>
-
         </main>
 
-        <!-- FOOTER ELEMENT -->
-        <footer class="bg-[#131722] border-t border-[#2A2E39] py-4 text-center mt-8">
-            <p class="text-[11px] text-slate-500">
-                Ali & Nabeel Prop Journal © 2026. Made with <i class="fa-solid fa-heart text-rose-500"></i> for Elite Market Operations.
-            </p>
+        <!-- TERMINAL LOWER FOOTER APEX -->
+        <footer class="bg-[#11161F] border-t border-[#222C3B] px-6 py-4 text-center text-xs text-gray-500">
+            &copy; 2026 Alpha Edge Inc. Real-time encrypted database synchronization protocol. Designed exclusively for Ali & Nabeel.
         </footer>
-
     </div>
 
-    <!-- ADD TRADE MODAL -->
-    <div id="addTradeModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-[#131722] border border-[#2A2E39] rounded-2xl w-full max-w-2xl overflow-hidden glow-blue flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
-            <div class="bg-[#1C2030] border-b border-[#2A2E39] px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-pen-nib text-emerald-400"></i>
-                    <h3 class="text-sm font-bold text-white">Record New Trading Journal Entry</h3>
-                </div>
-                <button onclick="closeLogTradeModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- MODAL COMPONENT BLOCK: RECORD DYNAMIC TRADE ENGINE -->
+    <div id="recordModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#151A22] border border-[#262F3D] w-full max-w-2xl rounded-2xl p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-5">
+            <div class="flex justify-between items-center pb-3 border-b border-[#262F3D]">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-square-sliders-stroke text-[#00E676]"></i> Committing New Strategic Ledger Block
+                </h3>
+                <button onclick="closeRecordModal()" class="text-gray-400 hover:text-white transition text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- Modal Form Body -->
-            <div class="p-6 overflow-y-auto space-y-4">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Date Input -->
+            <!-- CORE REGISTRATION FORM INTERFACE -->
+            <form id="tradeForm" onsubmit="handleTradeSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Date</label>
-                        <input id="tradeDate" type="date" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Date Structure</label>
+                        <input type="date" id="tradeDate" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
                     </div>
-                    <!-- Time Input -->
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Time</label>
-                        <input id="tradeTime" type="time" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Exact Hour Timestamp</label>
+                        <input type="time" id="tradeTime" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
                     </div>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Pair / Asset -->
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Asset Pair</label>
-                        <input id="tradePair" type="text" placeholder="e.g. EURUSD, XAUUSD" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 uppercase">
-                    </div>
-                    <!-- Session -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Trading Session</label>
-                        <select id="tradeSession" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                            <option value="London">London</option>
-                            <option value="New York">New York</option>
-                            <option value="Asian">Asian (Tokyo)</option>
-                        </select>
-                    </div>
-                    <!-- Direction -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Direction</label>
-                        <select id="tradeDirection" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                            <option value="Long">Long (Buy)</option>
-                            <option value="Short">Short (Sell)</option>
-                        </select>
-                    </div>
-                    <!-- Lot Size -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Lot Size</label>
-                        <input id="tradeLotSize" type="number" step="0.01" placeholder="0.10" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Entry Price -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Entry Price</label>
-                        <input id="tradeEntryPrice" type="number" step="any" placeholder="1.0850" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <!-- Exit Price -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Exit Price</label>
-                        <input id="tradeExitPrice" type="number" step="any" placeholder="1.0900" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <!-- Risk/Reward R -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Risk:Reward (R)</label>
-                        <input id="tradeRiskReward" type="number" step="0.1" placeholder="2.5" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <!-- Net Profit/Loss -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">P&L ($ Output)</label>
-                        <input id="tradePnl" type="number" step="any" placeholder="e.g. 250 or -120" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Mindset / Emotions -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Predominant Mindset / Emotion</label>
-                        <select id="tradeEmotion" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                            <option value="Calm">Calm & Rule-Compliant</option>
-                            <option value="FOMO">FOMO (Fear Of Missing Out)</option>
-                            <option value="Greed">Greed (Oversized, premature entry)</option>
-                            <option value="Fear">Fear of Losing (Scared entry/exit)</option>
-                            <option value="Revenge">Revenge Trade (Frustration entry)</option>
-                        </select>
-                    </div>
-                    <!-- Day manually calculated or auto-selected -->
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Day of the Week</label>
-                        <select id="tradeDay" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Day of Week Profile</label>
+                        <select id="tradeDay" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
                             <option value="Monday">Monday</option>
                             <option value="Tuesday">Tuesday</option>
                             <option value="Wednesday">Wednesday</option>
@@ -541,234 +285,187 @@
                     </div>
                 </div>
 
-                <!-- SCREENSHOT ATTACHMENT SECTION -->
-                <div class="bg-[#171B26] border border-[#2A2E39]/80 rounded-xl p-4 space-y-3">
-                    <span class="text-slate-300 text-xs font-bold flex items-center gap-2"><i class="fa-solid fa-camera text-indigo-400"></i> Trade Setup Chart Screenshot</span>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Option A: Upload File with Auto Compression -->
-                        <div>
-                            <label class="block text-[10px] text-slate-400 mb-1 font-semibold">Upload Local Image (Auto-Compressed)</label>
-                            <div class="relative bg-[#1C2030] border border-dashed border-[#2A2E39] hover:border-indigo-500 rounded-xl p-3 text-center transition cursor-pointer">
-                                <input type="file" id="tradeScreenshotFile" accept="image/*" onchange="handleScreenshotUpload(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <i class="fa-solid fa-cloud-arrow-up text-indigo-400 mb-1 block"></i>
-                                <span class="text-[10px] text-slate-300 block">Drag & Drop or Click to browse</span>
-                                <span class="text-[9px] text-slate-500 mt-0.5 block">Generates safe micro-payload</span>
-                            </div>
-                        </div>
-
-                        <!-- Option B: Paste Online URL Link -->
-                        <div class="flex flex-col justify-between">
-                            <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 font-semibold">Or Paste TradingView/Chart Link URL</label>
-                                <input id="tradeScreenshotUrl" type="url" oninput="handleScreenshotUrlChange()" placeholder="https://www.tradingview.com/x/..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div class="text-[9px] text-slate-500 mt-1 italic leading-tight">
-                                Paste TradingView capture link or standard web image addresses here.
-                            </div>
-                        </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Asset Asset Pair</label>
+                        <input type="text" id="tradePair" required placeholder="EURUSD, BTCUSD, XAUUSD" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 uppercase focus:outline-none focus:border-[#00E676]">
                     </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Direction Vectors</label>
+                        <select id="tradeDirection" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
+                            <option value="Long">📈 LONG / BUY</option>
+                            <option value="Short">📉 SHORT / SELL</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Trading Sessions Zone</label>
+                        <select id="tradeSession" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
+                            <option value="London">🇬🇧 London Session</option>
+                            <option value="New York">🇺🇸 New York Session</option>
+                            <option value="Asian">🇯🇵 Asian Session</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Allocated Lot Size</label>
+                        <input type="number" id="tradeLotSize" step="0.01" required placeholder="1.0" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                    </div>
+                </div>
 
-                    <!-- Sandbox Preview Container -->
-                    <div id="screenshotPreviewContainer" class="hidden">
-                        <span class="text-[9px] text-slate-400 block mb-1">Live Screenshot Preview:</span>
-                        <div class="relative w-full max-h-40 rounded-xl overflow-hidden border border-[#2A2E39] bg-[#0B0E14] flex items-center justify-center">
-                            <img id="screenshotPreviewImg" src="" alt="Screenshot Sandbox" class="max-w-full max-h-40 object-contain">
-                            <button onclick="clearScreenshotSelection()" class="absolute top-2 right-2 bg-rose-950/80 hover:bg-rose-950 text-rose-400 border border-rose-800 rounded-lg px-2.5 py-1 text-[10px] font-bold flex items-center gap-1 transition">
-                                <i class="fa-solid fa-trash-can"></i> Remove
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Entry Trigger Target</label>
+                        <input type="number" id="tradeEntry" step="0.00001" required placeholder="1.0850" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Exit Extraction Target</label>
+                        <input type="number" id="tradeExit" step="0.00001" required placeholder="1.0920" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Risk-Reward Metric</label>
+                        <input type="number" id="tradeRR" step="0.1" required placeholder="2.5" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Psychology State</label>
+                        <select id="tradeEmotion" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
+                            <option value="Calm">🟢 Calm / Systematic Execution</option>
+                            <option value="FOMO">🚨 FOMO / Chasing Move</option>
+                            <option value="Greed">💰 Greed / Overleveraged Position</option>
+                            <option value="Revenge">⚡ Revenge / Impulsive Recovery</option>
+                            <option value="Fear">😨 Fear / Early Profit Cut</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Net Realized P&L ($)</label>
+                        <input type="number" id="tradePnL" step="0.01" required placeholder="e.g. 250 or -120" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Trade Outcome Matrix</label>
+                        <div class="grid grid-cols-2 gap-2 h-[38px]">
+                            <button type="button" id="outcomeWinBtn" onclick="setOutcomeSelection('WIN')" class="bg-[#1C2430] border border-[#262F3D] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                                <i class="fa-solid fa-circle-check"></i> WIN
+                            </button>
+                            <button type="button" id="outcomeLossBtn" onclick="setOutcomeSelection('LOSS')" class="bg-[#1C2430] border border-[#262F3D] text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                                <i class="fa-solid fa-circle-xmark"></i> LOSS
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Strategic Notes -->
+                <!-- SCREENSHOT & CHART ATTACHMENT HUB -->
+                <div class="bg-[#11161F] border border-[#262F3D] p-4 rounded-xl space-y-3">
+                    <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide"><i class="fa-solid fa-camera"></i> Attachment Component (TradingView Setup Chart)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <span class="block text-[10px] text-gray-500 mb-1">Option A: Link URL Path</span>
+                            <input type="url" id="screenshotUrlField" oninput="handleScreenshotUrlInput()" placeholder="https://tradingview.com/x/..." class="w-full bg-[#1C2430] border border-[#262F3D] rounded-lg p-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676]">
+                        </div>
+                        <div>
+                            <span class="block text-[10px] text-gray-500 mb-1">Option B: Image Payload File Upload</span>
+                            <input type="file" id="screenshotFileField" accept="image/*" onchange="handleScreenshotFileUpload(event)" class="w-full text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#262F3D] file:text-white hover:file:bg-[#2e394a] file:cursor-pointer">
+                        </div>
+                    </div>
+                    <!-- LIVE ATTACHMENT COMPRESSION RUNTIME PREVIEW -->
+                    <div id="screenshotPreviewWrapper" class="hidden relative aspect-video w-full rounded-lg overflow-hidden border border-[#262F3D] bg-black">
+                        <img id="screenshotPreviewImg" src="" class="w-full h-full object-cover">
+                        <button type="button" onclick="clearAttachedScreenshot()" class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-md opacity-80 hover:opacity-100 transition cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1.5 font-semibold">Technical Confluences & Trade Notes</label>
-                    <textarea id="tradeNotes" rows="3" placeholder="Explain the rationale behind taking this setup, confluences used, and psychological reflections..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                    <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Execution Notes / Retrospect Confluences</label>
+                    <textarea id="tradeNotes" rows="2" placeholder="Describe liquidity sweeps, imbalance mitigation, confirmations, emotion triggers..." class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#00E676] resize-none"></textarea>
                 </div>
 
-                <!-- Custom Notification banner inside modal -->
-                <div id="modalError" class="hidden p-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-lg text-xs">
-                    Please fill out critical inputs (Date, Asset Pair, Direction, P&L Amount).
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeRecordModal()" class="bg-[#1C2430] hover:bg-[#222C3B] border border-[#262F3D] text-gray-300 font-bold px-5 py-2.5 rounded-xl text-xs cursor-pointer transition">Cancel</button>
+                    <button type="submit" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-black px-6 py-2.5 rounded-xl text-xs glow-green shadow-lg cursor-pointer transition">Commit Strategy Block</button>
                 </div>
-
-            </div>
-
-            <!-- Modal Actions Footer -->
-            <div class="bg-[#1C2030] border-t border-[#2A2E39] px-6 py-4 flex items-center justify-end gap-3">
-                <button onclick="closeLogTradeModal()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
-                    Discard
-                </button>
-                <button onclick="saveNewTrade()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold py-2 px-5 rounded-xl shadow-md transition">
-                    Save Trade Log
-                </button>
-            </div>
-
+            </form>
         </div>
     </div>
 
-    <!-- SUPABASE DB CONFIGURATION MODAL -->
-    <div id="dbSettingsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-        <div class="bg-[#131722] border border-[#2A2E39] rounded-2xl w-full max-w-lg overflow-hidden glow-blue flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
-            <div class="bg-[#1C2030] border-b border-[#2A2E39] px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-database text-indigo-400"></i>
-                    <h3 class="text-sm font-bold text-white">Database Settings & Cloud Sync</h3>
-                </div>
-                <button onclick="closeDbSettingsModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- MODAL COMPONENT BLOCK: DATABASE CONFIGURATION INTERFACE -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#151A22] border border-[#262F3D] w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-[#262F3D]">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gears text-yellow-500"></i> Operational Connection Configuration
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- Modal Body -->
-            <div class="p-6 overflow-y-auto space-y-4">
-                <p class="text-xs text-slate-400 leading-relaxed">
-                    By default, your trades are saved safely inside your device's browser memory (**LocalStorage**). 
-                    To sync with Nabeel in real-time, register a free project on <a href="https://supabase.com" target="_blank" class="text-indigo-400 underline hover:text-indigo-300 font-semibold">Supabase</a> and copy your credentials below:
-                </p>
-
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Supabase Project URL</label>
-                        <input id="dbUrl" type="text" placeholder="https://your-project.supabase.co" class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Supabase Anon/Public Key</label>
-                        <input id="dbAnonKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                    </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Supabase Cluster API Reference URL</label>
+                    <input type="text" id="dbUrl" placeholder="https://your-project.supabase.co" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2 text-xs text-white placeholder-gray-700 focus:outline-none focus:border-[#00B8D4]">
                 </div>
-
-                <div class="border-t border-[#2A2E39]/50 pt-4 space-y-3">
-                    <span class="text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-brain text-indigo-400"></i> Gemini LLM Settings (GitHub Deploy Option)</span>
-                    <p class="text-[10px] text-slate-400 leading-normal">
-                        To run AI audits on your custom GitHub Pages deploy, register a free key on Google AI Studio, or leave it blank to utilize the default sandboxed environment credentials:
-                    </p>
-                    <div>
-                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold">Optional Gemini API Key</label>
-                        <input id="geminiKeyField" type="password" placeholder="AIzaSy..." class="w-full bg-[#1C2030] border border-[#2A2E39] rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
-                    </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Supabase Anonymous Public Token Key</label>
+                    <input type="password" id="dbKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2 text-xs text-white placeholder-gray-700 focus:outline-none focus:border-[#00B8D4]">
                 </div>
-
-                <!-- Database Helper / Setup SQL Instructions -->
-                <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-3 space-y-2">
-                    <span class="text-[10px] bg-indigo-900/50 text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-700">SQL Setup Instruction</span>
-                    <p class="text-[10px] text-slate-400 leading-relaxed">
-                        Copy and execute this exact script inside your Supabase **SQL Editor** tab to create the required table layout:
-                    </p>
-                    <textarea readonly class="w-full h-24 bg-black/50 border border-[#2A2E39] rounded-lg p-2 font-mono text-[9px] text-emerald-400 select-all focus:outline-none" onclick="document.execCommand('copy');">create table trades (
-  id uuid default gen_random_uuid() primary key,
-  trader text not null,
-  date date not null,
-  time text,
-  day text,
-  pair text not null,
-  session text,
-  direction text,
-  lot_size numeric,
-  entry_price numeric,
-  exit_price numeric,
-  risk_reward numeric,
-  pnl numeric not null,
-  outcome text,
-  emotion text,
-  notes text,
-  screenshot text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Turn off RLS or define public policy:
-alter table trades enable row level security;
-create policy "Public access" on trades for all using (true);</textarea>
-                    <span class="text-[9px] text-slate-500 block text-right"><i class="fa-solid fa-info-circle"></i> Click box to copy code</span>
-                </div>
-
-                <!-- Danger Zone: Reset Data -->
-                <div class="border-t border-rose-500/20 pt-4 space-y-2">
-                    <span class="text-xs font-bold text-rose-400 flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation animate-pulse"></i> Journal Reset Zone</span>
-                    <p class="text-[10px] text-slate-400 leading-normal">
-                        Remove all default demo/mock trades from your device storage to start your live journal with a clean slate.
-                    </p>
-                    <button onclick="wipeAllCurrentTrades()" class="w-full bg-rose-950/30 hover:bg-rose-950/70 border border-rose-500/20 hover:border-rose-500/40 text-rose-400 text-[11px] font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-trash-can"></i> Clear All Mock/Demo Trades
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Footer Actions -->
-            <div class="bg-[#1C2030] border-t border-[#2A2E39] px-6 py-4 flex items-center justify-between">
-                <button onclick="clearDbCredentials()" class="bg-rose-950/30 border border-rose-900/30 text-rose-400 hover:bg-rose-950/50 text-xs font-semibold py-2 px-4 rounded-xl transition">
-                    Disconnect Cloud
+                <button onclick="saveDatabaseCredentials()" class="w-full bg-[#00B8D4] hover:bg-[#00a2bc] text-[#0A0E12] font-bold py-2 rounded-xl text-xs shadow-md transition cursor-pointer">
+                    Link Shared Architecture Cloud Sync
                 </button>
-                <div class="flex items-center gap-2">
-                    <button onclick="closeDbSettingsModal()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
-                        Cancel
-                    </button>
-                    <button onclick="saveDbCredentials()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold py-2 px-5 rounded-xl shadow-md transition">
-                        Connect Database
-                    </button>
-                </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- CUSTOM CONFIRMATION MODAL -->
-    <div id="confirmDeleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-        <div class="bg-[#131722] border border-rose-500/30 rounded-2xl w-full max-w-sm overflow-hidden glow-red p-6 space-y-4">
-            <div class="flex items-center gap-3 text-rose-400">
-                <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
-                <h3 class="text-sm font-bold text-white">Delete Journal Entry?</h3>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-                This process is completely irreversible. This entry will be deleted permanently from your trading dashboard history.
-            </p>
-            <div class="flex justify-end gap-3 mt-2">
-                <button onclick="closeDeleteConfirmation()" class="bg-[#2A2E39] hover:bg-[#363C4E] text-slate-300 text-xs font-semibold py-2 px-4 rounded-xl transition">
-                    Cancel
-                </button>
-                <button onclick="deleteTrade()" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs font-semibold py-2 px-5 rounded-xl transition">
-                    Delete
+            <!-- DANGER CLEAN RECOVERY SEED MATRIX ZONE -->
+            <div class="border-t border-[#262F3D] pt-4 mt-2">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-red-400 flex items-center gap-1.5 mb-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Administration & Recovery Zone
+                </h4>
+                <p class="text-[11px] text-gray-400 mb-3">If you or Nabeel see initial demo data that you already deleted, purge it permanently here:</p>
+                <button onclick="triggerPurgeMockTrades()" class="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Clear All Mock/Demo Trades
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- FULL SCREEN LIGHTBOX MODAL FOR IMAGES -->
-    <div id="screenshotLightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
-        <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
-            <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-slate-400 hover:text-white transition text-xs bg-[#1C2030] py-2 px-4 rounded-xl border border-[#2A2E39] flex items-center gap-2">
-                <i class="fa-solid fa-xmark text-sm"></i> Close Screen
-            </button>
-            <img id="lightboxImg" src="" alt="Trade Screenshot Full" class="max-w-full max-h-[85vh] rounded-xl border border-[#2A2E39] object-contain shadow-2xl">
-            <div class="mt-4 flex gap-3">
-                <a id="lightboxDownloadBtn" href="#" download="trade-screenshot.jpg" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition shadow-md shadow-indigo-950">
-                    <i class="fa-solid fa-download"></i> Download Chart Image
-                </a>
+    <!-- MODAL COMPONENT BLOCK: LIGHTBOX SCREENSHOT MAXIMIZER -->
+    <div id="lightboxModal" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4 hidden" onclick="closeLightboxModal()">
+        <button class="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <div class="max-w-4xl w-full max-h-[85vh] flex items-center justify-center shadow-2xl border border-[#262F3D] rounded-xl overflow-hidden bg-[#11161F]" onclick="event.stopPropagation()">
+            <img id="lightboxTargetImage" src="" class="max-w-full max-h-[85vh] object-contain">
+        </div>
+    </div>
+
+    <!-- COMPLIANT INTERNAL CONFIRMATION PROMPT DIALOG OVERLAY (NO BROWSER NATIVE ALERT BLOCKS) -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#151A22] border border-red-500/30 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center text-xl mx-auto border border-red-500/20">
+                <i class="fa-solid fa-trash-arrow-up"></i>
+            </div>
+            <div>
+                <h3 id="confirmModalTitle" class="text-sm font-bold text-white">Purge Strategic Block Entry?</h3>
+                <p id="confirmModalDescription" class="text-xs text-gray-400 mt-1">This operational data point will be stripped permanently from local cache and linked clusters.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="dismissCustomConfirm(false)" class="bg-[#1C2430] hover:bg-[#222C3B] border border-[#262F3D] text-gray-300 font-bold py-2 rounded-xl text-xs cursor-pointer transition">Abort</button>
+                <button onclick="dismissCustomConfirm(true)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-xl text-xs cursor-pointer transition shadow-lg">Confirm Purge</button>
             </div>
         </div>
     </div>
 
-    <!-- TOAST POPUP NOTIFICATION -->
-    <div id="notificationToast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm bg-[#131722] border border-[#2A2E39] p-4 rounded-2xl flex items-start gap-3 shadow-2xl">
-        <div id="toastIconContainer" class="p-2 rounded-xl text-white">
-            <i id="toastIcon" class="fa-solid fa-info text-sm"></i>
-        </div>
-        <div>
-            <h4 id="toastTitle" class="text-xs font-bold text-white">Notification Alert</h4>
-            <p id="toastMessage" class="text-[11px] text-slate-400 mt-1 leading-relaxed">No dynamic message set.</p>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC CORE -->
+    <!-- MAIN SYSTEM CORE ARCHITECTURE JAVASCRIPT MOTOR RUNTIME -->
     <script>
         // Seed initial trades if both LocalStorage and Supabase are empty
         const defaultMockTrades = [
-            { id: "mock-1", trader: "Ali", date: "2026-06-15", time: "14:30", day: "Monday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.08520, exitPrice: 1.08950, lotSize: 0.5, pnl: 215.00, outcome: "Win", riskReward: "2.1", emotion: "Calm", notes: "Clean breakout from Asian session range. Retest was successful.", screenshot: "https://placehold.co/800x450/131722/089981?text=EURUSD+London+Breakout+Success" },
-            { id: "mock-2", trader: "Nabeel", date: "2026-06-16", time: "16:15", day: "Tuesday", pair: "GBPUSD", direction: "Short", session: "New York", entryPrice: 1.26800, exitPrice: 1.26420, lotSize: 1.0, pnl: 380.00, outcome: "Win", riskReward: "3.0", emotion: "Calm", notes: "NY opening sweep. Caught high of the day setup perfectly.", screenshot: "https://placehold.co/800x450/131722/2962FF?text=GBPUSD+New+York+Liquidity+Grab" },
-            { id: "mock-3", trader: "Ali", date: "2026-06-18", time: "09:10", day: "Thursday", pair: "BTCUSD", direction: "Long", session: "Asian", entryPrice: 67200, exitPrice: 66800, lotSize: 0.1, pnl: -40.00, outcome: "Loss", riskReward: "1.5", emotion: "FOMO", notes: "Entered too early without waiting for H1 candle close. Over-eager." },
-            { id: "mock-4", trader: "Nabeel", date: "2026-06-22", time: "15:45", day: "Monday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2345.50, exitPrice: 2352.00, lotSize: 0.3, pnl: -195.00, outcome: "Loss", riskReward: "2.0", emotion: "Greed", notes: "Tried to short gold during high impact news. Slipped stop loss.", screenshot: "https://placehold.co/800x450/131722/F23645?text=Gold+News+Slippage+Loss" },
-            { id: "mock-5", trader: "Ali", date: "2026-06-24", time: "13:10", day: "Wednesday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.09100, exitPrice: 1.09650, lotSize: 0.5, pnl: 275.00, outcome: "Win", riskReward: "2.5", emotion: "Calm", notes: "Beautiful structural shift on M15. Highly confident setup." },
-            { id: "mock-6", trader: "Nabeel", date: "2026-06-28", time: "16:00", day: "Tuesday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2331.00, exitPrice: 2320.00, lotSize: 0.4, pnl: 440.00, outcome: "Win", riskReward: "3.5", emotion: "Calm", notes: "Liquidity grab at 2335, then instant rejection. Held beautifully.", screenshot: "https://placehold.co/800x450/131722/089981?text=Gold+M15+Orderblock+Refinement" }
+            { id: "mock-1", trader: "Ali", date: "2026-06-15", time: "14:30", day: "Monday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.08520, exitPrice: 1.08950, lotSize: 0.5, pnl: 215.00, outcome: "WIN", riskReward: "2.1", emotion: "Calm", notes: "Clean breakout from Asian session range. Retest was successful.", screenshot: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80" },
+            { id: "mock-2", trader: "Nabeel", date: "2026-06-16", time: "16:15", day: "Tuesday", pair: "GBPUSD", direction: "Short", session: "New York", entryPrice: 1.26800, exitPrice: 1.26420, lotSize: 1.0, pnl: 380.00, outcome: "WIN", riskReward: "3.0", emotion: "Calm", notes: "NY opening sweep. Caught high of the day setup perfectly.", screenshot: "" },
+            { id: "mock-3", trader: "Ali", date: "2026-06-18", time: "09:10", day: "Thursday", pair: "BTCUSD", direction: "Long", session: "Asian", entryPrice: 67200, exitPrice: 66800, lotSize: 0.1, pnl: -40.00, outcome: "LOSS", riskReward: "1.5", emotion: "FOMO", notes: "Entered too early without waiting for H1 candle close. Over-eager.", screenshot: "" },
+            { id: "mock-4", trader: "Nabeel", date: "2026-06-22", time: "15:45", day: "Monday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2345.50, exitPrice: 2352.00, lotSize: 0.3, pnl: -195.00, outcome: "LOSS", riskReward: "2.0", emotion: "Greed", notes: "Tried to short gold during high impact news. Slipped stop loss.", screenshot: "" }
+        ];
+
+        // Psychological Master Quotes Rotation Registry
+        const psychologicalQuotesPool = [
+            `"The market is a device for transferring money from the impatient to the patient." – Warren Buffett`,
+            `"Amateur traders focus on how much money they can make. Professional traders focus on risk management." – Paul Tudor Jones`,
+            `"You don't need a 90% win rate to be highly profitable. You need a model where your wins are multiples of your losses."`,
+            `"Ali, Nabeel: Discipline is not doing what you feel like doing; it's doing what your plan dictates regardless of emotions."`,
+            `"Accepting a loss is a core technical component of an elite trading edge. Revenge trading is the path to ruin."`
         ];
 
         // Global State Variables
@@ -776,602 +473,466 @@ create policy "Public access" on trades for all using (true);</textarea>
         let pnlChartInstance = null;
         let sessionChartInstance = null;
         let currentTrader = null;
-        let supabaseClient = null;
+        let selectedOutcome = "WIN"; // Default form choice
         let selectedScreenshotBase64 = ""; // Holds local uploaded base64 data or chart link
         let tradeIdToDelete = null; // Guard for non-alert, safe deletion flow
-        
-        let geminiApiKey = localStorage.getItem("gemini_api_key") || "";
-        let isAiAnalyzing = false;
-        let aiChatHistory = [];
-        let activeAudioUrl = null;
+        let onCustomConfirmAction = null; // Holds callback pointer
 
-        // Credentials Autodetect from local memory
-        window.addEventListener("DOMContentLoaded", () => {
-            initializeSupabaseConnection();
-            checkExistingSession();
+        // Initialization Pipeline Lifecycle Entry
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeSystemData();
+            rotateQuote();
         });
 
-        // Safe Login execution logic
-        function attemptLogin() {
-            const selected = document.getElementById("loginTrader").value;
-            const enteredPasscode = document.getElementById("loginPasscode").value.trim();
-            const errorBanner = document.getElementById("loginError");
+        function initializeSystemData() {
+            const stored = localStorage.getItem('alpha_trades_registry');
+            const mockDismissed = localStorage.getItem('alpha_mock_dismissed') === 'true';
 
-            if (enteredPasscode === "TRADE786") {
-                errorBanner.classList.add("hidden");
-                currentTrader = selected;
-                
-                // Save session in localStorage
-                localStorage.setItem("journal_authenticated_user", selected);
-                
-                // Reveal main interface
-                document.getElementById("loginPortal").classList.add("hidden");
-                document.getElementById("mainDashboard").classList.remove("hidden");
-                document.getElementById("activeUserLabel").innerText = selected;
-                
-                // Load operational data
-                syncAndRefreshAllData();
-                showNotification("Welcome, " + selected + "!", "Your premium trading dashboard has decrypted successfully.", "success");
-            } else {
-                errorBanner.classList.remove("hidden");
-            }
-        }
-
-        function checkExistingSession() {
-            const savedUser = localStorage.getItem("journal_authenticated_user");
-            if (savedUser) {
-                currentTrader = savedUser;
-                document.getElementById("loginPortal").classList.add("hidden");
-                document.getElementById("mainDashboard").classList.remove("hidden");
-                document.getElementById("activeUserLabel").innerText = savedUser;
-                syncAndRefreshAllData();
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem("journal_authenticated_user");
-            currentTrader = null;
-            document.getElementById("mainDashboard").classList.add("hidden");
-            document.getElementById("loginPortal").classList.remove("hidden");
-            document.getElementById("loginPasscode").value = "";
-        }
-
-        // Initialize Supabase optional integration
-        function initializeSupabaseConnection() {
-            const url = localStorage.getItem("supabase_url");
-            const key = localStorage.getItem("supabase_key");
-            const syncDot = document.getElementById("syncStatusBadge");
-            const syncText = document.getElementById("syncStatusText");
-
-            if (url && key) {
-                try {
-                    // Initialize the client library
-                    supabaseClient = supabase.createClient(url, key);
-                    syncDot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                    syncText.innerText = "Cloud Synced (Supabase)";
-                    syncText.title = "Real-time updates between Ali & Nabeel active.";
-                } catch (e) {
-                    console.error("Supabase connection parameters faulty:", e);
-                    supabaseClient = null;
-                    setFallbackToLocalMode();
-                }
-            } else {
-                setFallbackToLocalMode();
-            }
-        }
-
-        function setFallbackToLocalMode() {
-            const syncDot = document.getElementById("syncStatusBadge");
-            const syncText = document.getElementById("syncStatusText");
-            supabaseClient = null;
-            syncDot.className = "inline-block w-2.5 h-2.5 rounded-full bg-yellow-500";
-            syncText.innerText = "Device Storage (Local)";
-            syncText.title = "Save trades privately inside your browser memory.";
-        }
-
-        // Pull active databases (local/Supabase hybrid model)
-        async function syncAndRefreshAllData() {
-            if (supabaseClient) {
-                await fetchSupabaseTrades();
-            } else {
-                fetchLocalTrades();
-            }
-        }
-
-        function fetchLocalTrades() {
-            const raw = localStorage.getItem("trading_journal_trades");
-            const dismissed = localStorage.getItem("journal_mock_dismissed");
-            if (raw) {
-                tradesList = JSON.parse(raw);
-            } else if (dismissed !== "true") {
-                // Preload mock trades first time only
+            if (stored) {
+                tradesList = JSON.parse(stored);
+            } else if (!mockDismissed) {
                 tradesList = [...defaultMockTrades];
-                localStorage.setItem("trading_journal_trades", JSON.stringify(tradesList));
+                localStorage.setItem('alpha_trades_registry', JSON.stringify(tradesList));
             } else {
                 tradesList = [];
             }
-            refreshDashboardAndTable();
+            
+            // Sync UI inputs with standard selections
+            setOutcomeSelection('WIN');
         }
 
-        async function fetchSupabaseTrades() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('trades')
-                    .select('*')
-                    .order('date', { ascending: true });
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    // Map snake_case columns back to our JS camelCase structure
-                    tradesList = data.map(item => ({
-                        id: item.id,
-                        trader: item.trader,
-                        date: item.date,
-                        time: item.time,
-                        day: item.day,
-                        pair: item.pair,
-                        session: item.session,
-                        direction: item.direction,
-                        lotSize: parseFloat(item.lot_size) || 0.10,
-                        entryPrice: parseFloat(item.entry_price) || 0,
-                        exitPrice: parseFloat(item.exit_price) || 0,
-                        riskReward: parseFloat(item.risk_reward) || 1.0,
-                        pnl: parseFloat(item.pnl),
-                        outcome: item.outcome,
-                        emotion: item.emotion,
-                        notes: item.notes,
-                        screenshot: item.screenshot
-                    }));
-                } else {
-                    // Fix: DO NOT auto-seed mock trades in Supabase cloud!
-                    // If cloud is intentionally empty, keep it empty.
-                    tradesList = [];
-                }
-                refreshDashboardAndTable();
-            } catch (err) {
-                console.error("Failed to read Supabase logs:", err);
-                showNotification("Connection Warning", "Supabase error. Falling back to local offline storage.", "error");
-                fetchLocalTrades();
-            }
-        }
-    </script>
-
-    <script>
-        // Refresh charts, executive KPIs, and ledger rows
-        function refreshDashboardAndTable() {
-            // Apply current UI dropdown filters
-            const targetTrader = document.getElementById("filterTrader").value;
-            const targetSession = document.getElementById("filterSession").value;
-            const targetDirection = document.getElementById("filterDirection").value;
-            const targetEmotion = document.getElementById("filterEmotion").value;
-
-            const filteredTrades = tradesList.filter(t => {
-                const matchesTrader = targetTrader === "All" || t.trader === targetTrader;
-                const matchesSession = targetSession === "All" || t.session === targetSession;
-                const matchesDirection = targetDirection === "All" || t.direction === targetDirection;
-                const matchesEmotion = targetEmotion === "All" || t.emotion === targetEmotion;
-                return matchesTrader && matchesSession && matchesDirection && matchesEmotion;
-            });
-
-            // Update UI
-            calculateExecutiveMetrics(filteredTrades);
-            renderCharts(filteredTrades);
-            renderTable(filteredTrades);
+        // IDENTITY TERMINAL GATEKEEPER PASSCODE CONTROLS
+        function selectUser(user) {
+            currentTrader = user;
+            document.getElementById('btnAli').className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer " + (user === 'Ali' ? "border-[#00E676] bg-[#00E676]/10 text-white" : "border-[#262F3D] bg-[#1C2430] text-gray-400");
+            document.getElementById('btnNabeel').className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer " + (user === 'Nabeel' ? "border-[#00E676] bg-[#00E676]/10 text-white" : "border-[#262F3D] bg-[#1C2430] text-gray-400");
         }
 
-        // Calculate Executive KPIs
-        function calculateExecutiveMetrics(trades) {
-            const total = trades.length;
-            document.getElementById("statTotalTrades").innerText = total;
+        function attemptLogin() {
+            const passcode = document.getElementById('passcodeField').value;
+            const errorLabel = document.getElementById('loginError');
 
-            const aliCount = trades.filter(t => t.trader === "Ali").length;
-            const nabeelCount = trades.filter(t => t.trader === "Nabeel").length;
-            document.getElementById("statTraderSplit").innerHTML = `<span>Ali: ${aliCount}</span><span>Nabeel: ${nabeelCount}</span>`;
-
-            if (total === 0) {
-                document.getElementById("statNetPnl").innerText = "$0.00";
-                document.getElementById("statNetPnl").className = "text-2xl font-black text-slate-100";
-                document.getElementById("statWinRate").innerText = "0%";
-                document.getElementById("statWinRateFill").style.width = "0%";
-                document.getElementById("statProfitFactor").innerText = "0.00";
-                
-                // Clear 1-2 month diagnostics summary indicators
-                document.getElementById("bestSessionText").innerText = "No Data Analyzed";
-                document.getElementById("bestDirectionText").innerText = "No Data Analyzed";
-                document.getElementById("bestDayText").innerText = "No Data Analyzed";
-                document.getElementById("mentalTaxText").innerText = "$0.00";
+            if (!currentTrader) {
+                errorLabel.innerText = "Please choose an operator profile identity!";
+                errorLabel.classList.remove('hidden');
                 return;
             }
 
-            // Calculations
-            let totalProfit = 0;
-            let winsCount = 0;
-            let grossWins = 0;
-            let grossLosses = 0;
-
-            // Diagnostic accumulators
-            const sessionsMap = {};
-            const directionsMap = {};
-            const daysMap = {};
-            let mentalTaxValue = 0; // Cumulative losses on bad emotional triggers
-
-            trades.forEach(t => {
-                const amount = parseFloat(t.pnl) || 0;
-                totalProfit += amount;
-                if (amount >= 0) {
-                    winsCount++;
-                    grossWins += amount;
-                } else {
-                    grossLosses += Math.abs(amount);
-                }
-
-                // 1. Session tracking
-                sessionsMap[t.session] = (sessionsMap[t.session] || 0) + amount;
-                // 2. Direction tracking
-                directionsMap[t.direction] = (directionsMap[t.direction] || 0) + amount;
-                // 3. Weekday tracking
-                if (t.day) {
-                    daysMap[t.day] = (daysMap[t.day] || 0) + amount;
-                }
-
-                // 4. Emotional loss tracker (FOMO, Revenge, Greed are penalized)
-                if (['FOMO', 'Greed', 'Revenge'].includes(t.emotion) && amount < 0) {
-                    mentalTaxValue += Math.abs(amount);
-                }
-            });
-
-            // Render net P&L text format with colors
-            const pnlLabel = document.getElementById("statNetPnl");
-            pnlLabel.innerText = (totalProfit >= 0 ? '+' : '') + '$' + totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            pnlLabel.className = `text-2xl font-black ${totalProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
-
-            // Win rate calculations
-            const winRatePercent = Math.round((winsCount / total) * 100);
-            document.getElementById("statWinRate").innerText = winRatePercent + "%";
-            document.getElementById("statWinRateFill").style.width = winRatePercent + "%";
-
-            // Profit Factor calculation
-            const profitFactor = grossLosses === 0 ? grossWins.toFixed(2) : (grossWins / grossLosses).toFixed(2);
-            document.getElementById("statProfitFactor").innerText = profitFactor;
-
-            // Generate 1-2 Month metrics summary values
-            // Determine best session
-            let bestSession = "None";
-            let maxSessionPnl = -Infinity;
-            Object.keys(sessionsMap).forEach(s => {
-                if (sessionsMap[s] > maxSessionPnl) {
-                    maxSessionPnl = sessionsMap[s];
-                    bestSession = s;
-                }
-            });
-            document.getElementById("bestSessionText").innerText = bestSession !== "None" && maxSessionPnl > 0 ? `${bestSession} Session` : "No session wins";
-
-            // Determine best direction
-            let bestDirection = "None";
-            let maxDirectionPnl = -Infinity;
-            Object.keys(directionsMap).forEach(d => {
-                if (directionsMap[d] > maxDirectionPnl) {
-                    maxDirectionPnl = directionsMap[d];
-                    bestDirection = d;
-                }
-            });
-            document.getElementById("bestDirectionText").innerText = bestDirection !== "None" && maxDirectionPnl > 0 ? `${bestDirection} Trades` : "No directional wins";
-
-            // Determine best day
-            let bestDay = "None";
-            let maxDayPnl = -Infinity;
-            Object.keys(daysMap).forEach(dy => {
-                if (daysMap[dy] > maxDayPnl) {
-                    maxDayPnl = daysMap[dy];
-                    bestDay = dy;
-                }
-            });
-            document.getElementById("bestDayText").innerText = bestDay !== "None" && maxDayPnl > 0 ? bestDay : "No profitable days";
-
-            // Render mental tax estimation
-            document.getElementById("mentalTaxText").innerText = `$${mentalTaxValue.toFixed(2)}`;
+            if (passcode === "TRADE786") {
+                errorLabel.classList.add('hidden');
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                document.getElementById('displayUser').innerText = currentTrader;
+                
+                // Trigger compilation of interface tables and charts
+                renderTable(tradesList);
+                updateAnalytics(tradesList);
+            } else {
+                errorLabel.innerText = "Invalid security access code sequence!";
+                errorLabel.classList.remove('hidden');
+            }
         }
 
-        // Render cumulative line charts and session statistics charts
-        function renderCharts(trades) {
-            // 1. Cumulative Capital Curve Construction
-            const capitalCurveCtx = document.getElementById('capitalCurveChart').getContext('2d');
-            
-            // Build absolute chronological P&L trajectory
-            let runningSum = 0;
-            const labels = ["Start"];
-            const chartDataPoints = [0];
+        function logoutSession() {
+            document.getElementById('passcodeField').value = "";
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainDashboard').classList.add('hidden');
+        }
 
-            trades.forEach((t, index) => {
-                runningSum += parseFloat(t.pnl) || 0;
-                labels.push(`${t.date} (${t.pair})`);
-                chartDataPoints.push(runningSum);
-            });
+        // SYSTEM DYNAMIC MOTIVATIONAL MOTOR
+        function rotateQuote() {
+            const randomIndex = Math.floor(Math.random() * psychologicalQuotesPool.length);
+            document.getElementById('motivationalQuote').innerText = psychologicalQuotesPool[randomIndex];
+        }
 
-            if (pnlChartInstance) {
-                pnlChartInstance.destroy();
+        // SYSTEM MATH ANALYTICS CORE PROCESSING ENGINE (1-2 MONTH DATA CALCULATIONS)
+        function updateAnalytics(trades) {
+            const totalTrades = trades.length;
+            document.getElementById('statTotalTrades').innerText = totalTrades;
+
+            if (totalTrades === 0) {
+                document.getElementById('statWinRate').innerText = "0%";
+                document.getElementById('statNetPnL').innerText = "$0.00";
+                document.getElementById('statNetPnL').className = "text-2xl font-black text-white mt-2";
+                document.getElementById('statBestSession').innerText = "N/A";
+                document.getElementById('statBestDay').innerText = "N/A";
+                document.getElementById('statBestDirection').innerText = "N/A";
+                renderCharts([], { London: 0, "New York": 0, Asian: 0 });
+                return;
             }
 
-            pnlChartInstance = new Chart(capitalCurveCtx, {
+            // Calculations Metrics
+            const wins = trades.filter(t => t.outcome === 'WIN');
+            const winRate = Math.round((wins.length / totalTrades) * 100);
+            document.getElementById('statWinRate').innerText = `${winRate}%`;
+
+            const netPnL = trades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
+            const formattedPnL = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netPnL);
+            document.getElementById('statNetPnL').innerText = formattedPnL;
+            if (netPnL >= 0) {
+                document.getElementById('statNetPnL').className = "text-2xl font-black text-[#00E676] mt-2";
+            } else {
+                document.getElementById('statNetPnL').className = "text-2xl font-black text-red-400 mt-2";
+            }
+
+            // Advanced Cluster Math: Best Session, Day and Direction Extraction based on profitable track records
+            const sessionsMap = { London: 0, "New York": 0, Asian: 0 };
+            const daysMap = { Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0 };
+            const directionMap = { Long: 0, Short: 0 };
+
+            trades.forEach(t => {
+                if(sessionsMap[t.session] !== undefined) sessionsMap[t.session] += parseFloat(t.pnl || 0);
+                if(daysMap[t.day] !== undefined) daysMap[t.day] += parseFloat(t.pnl || 0);
+                if(directionMap[t.direction] !== undefined) directionMap[t.direction] += parseFloat(t.pnl || 0);
+            });
+
+            const bestSession = Object.keys(sessionsMap).reduce((a, b) => sessionsMap[a] > sessionsMap[b] ? a : b);
+            const bestDay = Object.keys(daysMap).reduce((a, b) => daysMap[a] > daysMap[b] ? a : b);
+            const bestDirection = Object.keys(directionMap).reduce((a, b) => directionMap[a] > directionMap[b] ? a : b);
+
+            document.getElementById('statBestSession').innerText = sessionsMap[bestSession] > 0 ? bestSession : "N/A";
+            document.getElementById('statBestDay').innerText = daysMap[bestDay] > 0 ? bestDay : "N/A";
+            document.getElementById('statBestDirection').innerText = directionMap[bestDirection] > 0 ? bestDirection : "N/A";
+
+            // Compile data sets for charts pipeline mapping
+            let rollingSum = 0;
+            const lineCoordinates = trades.slice().reverse().map(t => {
+                rollingSum += parseFloat(t.pnl || 0);
+                return rollingSum;
+            });
+
+            renderCharts(lineCoordinates, sessionsMap);
+        }
+
+        // GRAPH RENDER CONTROLLER (CHART.JS INTERACTION ENGINE)
+        function renderCharts(lineData, barDataMap) {
+            // Line Chart Curve Engine
+            const ctxLine = document.getElementById('pnlLineChart').getContext('2d');
+            if (pnlChartInstance) pnlChartInstance.destroy();
+            
+            const labelsLine = lineData.map((_, i) => `Trade ${i+1}`);
+            pnlChartInstance = new Chart(ctxLine, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: labelsLine.length ? labelsLine : ['No Entries'],
                     datasets: [{
-                        label: 'Combined Capital ($)',
-                        data: chartDataPoints,
-                        borderColor: '#2962FF',
+                        label: 'Capital Growth Track ($)',
+                        data: lineData.length ? lineData : [0],
+                        borderColor: '#00B8D4',
+                        backgroundColor: 'rgba(0, 184, 212, 0.05)',
                         borderWidth: 2.5,
-                        backgroundColor: 'rgba(41, 98, 255, 0.04)',
+                        tension: 0.2,
                         fill: true,
-                        tension: 0.1,
-                        pointBackgroundColor: '#2962FF',
-                        pointBorderColor: '#131722',
-                        pointHoverRadius: 6
+                        pointBackgroundColor: '#00B8D4'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            ticks: { color: '#626D7F', font: { size: 9 } },
-                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
-                        },
-                        y: {
-                            ticks: { color: '#626D7F', font: { size: 9 } },
-                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
-                        }
+                        x: { grid: { color: '#1C2430' }, ticks: { color: '#64748B', font: { size: 10 } } },
+                        y: { grid: { color: '#1C2430' }, ticks: { color: '#64748B', font: { size: 10 } } }
                     }
                 }
             });
 
-            // 2. Bar Chart: Win vs Loss Metrics grouped by Session (London, NY, Asian)
-            const sessionBarCtx = document.getElementById('sessionBarChart').getContext('2d');
+            // Bar Chart Session Distribution Engine
+            const ctxBar = document.getElementById('sessionBarChart').getContext('2d');
+            if (sessionChartInstance) sessionChartInstance.destroy();
 
-            const sessionStructure = {
-                'London': { win: 0, loss: 0 },
-                'New York': { win: 0, loss: 0 },
-                'Asian': { win: 0, loss: 0 }
-            };
-
-            trades.forEach(t => {
-                const amount = parseFloat(t.pnl) || 0;
-                const activeBlock = t.session || 'London';
-                if (sessionStructure[activeBlock]) {
-                    if (amount >= 0) {
-                        sessionStructure[activeBlock].win += amount;
-                    } else {
-                        sessionStructure[activeBlock].loss += Math.abs(amount);
-                    }
-                }
-            });
-
-            if (sessionChartInstance) {
-                sessionChartInstance.destroy();
-            }
-
-            sessionChartInstance = new Chart(sessionBarCtx, {
+            sessionChartInstance = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: ['London Block', 'New York Block', 'Asian (Tokyo)'],
-                    datasets: [
-                        {
-                            label: 'Gains ($)',
-                            data: [sessionStructure['London'].win, sessionStructure['New York'].win, sessionStructure['Asian'].win],
-                            backgroundColor: '#089981',
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Losses ($)',
-                            data: [sessionStructure['London'].loss, sessionStructure['New York'].loss, sessionStructure['Asian'].loss],
-                            backgroundColor: '#f23645',
-                            borderRadius: 4
-                        }
-                    ]
+                    labels: ['London', 'New York', 'Asian'],
+                    datasets: [{
+                        data: [barDataMap.London, barDataMap["New York"], barDataMap.Asian],
+                        backgroundColor: ['#00E676', '#00B8D4', '#9333EA'],
+                        borderRadius: 6
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#626D7F', font: { size: 9 } }
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            ticks: { color: '#626D7F', font: { size: 9 } },
-                            grid: { display: false }
-                        },
-                        y: {
-                            ticks: { color: '#626D7F', font: { size: 9 } },
-                            grid: { color: 'rgba(42, 46, 57, 0.2)' }
-                        }
+                        x: { grid: { display: false }, ticks: { color: '#64748B', font: { size: 10 } } },
+                        y: { grid: { color: '#1C2430' }, ticks: { color: '#64748B', font: { size: 10 } } }
                     }
                 }
             });
         }
-    </script>
 
-    <script>
-        // Renders ledger rows dynamically
+        // DYNAMIC FILTER MATRIX ENGINE
+        function applyFilters() {
+            const trader = document.getElementById('filterTrader').value;
+            const session = document.getElementById('filterSession').value;
+            const outcome = document.getElementById('filterOutcome').value;
+
+            let filtered = [...tradesList];
+
+            if (trader !== 'ALL') filtered = filtered.filter(t => t.trader === trader);
+            if (session !== 'ALL') filtered = filtered.filter(t => t.session === session);
+            if (outcome !== 'ALL') filtered = filtered.filter(t => t.outcome === outcome);
+
+            renderTable(filtered);
+        }
+
+        // RENDERING MECHANISM FOR TABLE LEDGER VIEW
         function renderTable(trades) {
-            const tbody = document.getElementById("tradesTableBody");
+            const tbody = document.getElementById('tradesTableBody');
             tbody.innerHTML = "";
 
             if (trades.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="11" class="py-10 text-center text-slate-500 text-xs italic">
-                            <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>
-                            No trading record matching active filters. Click 'Record Trade' to log one.
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500 font-medium">No tracking logs match active filter configuration parameters. Click 'Record Trade Log' to update.</td></tr>`;
                 return;
             }
 
-            // Descending order for the ledger view
-            const chronologicalDesc = [...trades].reverse();
-
-            chronologicalDesc.forEach(t => {
-                const dateObj = new Date(t.date);
-                const dayName = t.day || 'Monday';
-                const pnlAmount = parseFloat(t.pnl) || 0;
-                const isWin = pnlAmount >= 0;
-
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-[#1C2030]/30 transition duration-150 border-b border-[#2A2E39]/20";
+            trades.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-[#1C2430]/40 transition duration-150 border-b border-[#222C3B]/20";
                 
+                const isWin = t.outcome === 'WIN';
+                const pnlAmount = parseFloat(t.pnl || 0);
+                const pnlClass = pnlAmount >= 0 ? "text-[#00E676] font-bold" : "text-red-400 font-bold";
+                const badgeOutcomeClass = isWin ? "bg-[#00E676]/10 text-[#00E676] border-#00E676/20" : "bg-red-500/10 text-red-400 border-red-500/20";
+                
+                // Screenshot Render Logic Validation
+                let imageThumbnailMarkup = "";
+                if (t.screenshot && t.screenshot.trim() !== "") {
+                    imageThumbnailMarkup = `
+                        <div class="mt-2 relative group w-28 h-16 rounded-lg overflow-hidden border border-[#262F3D] bg-black shadow-inner cursor-zoom-in" onclick="triggerLightboxMaximize('${t.screenshot}')">
+                            <img src="${t.screenshot}" class="w-full h-full object-cover transition duration-300 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-200">
+                                <i class="fa-solid fa-maximize text-white text-xs"></i>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 tr.innerHTML = `
-                    <td class="py-3 px-4">
-                        <span class="block text-white font-semibold">${t.date}</span>
-                        <span class="text-[10px] text-slate-500">${t.time || 'N/A'} • ${dayName}</span>
+                    <td class="p-4 font-semibold text-white">${t.date}<span class="block text-[10px] font-normal text-gray-500 mt-0.5">${t.time} • ${t.day}</span></td>
+                    <td class="p-4 font-medium text-gray-300"><i class="fa-solid ${t.trader === 'Ali' ? 'fa-user-crown text-[#00E676]' : 'fa-user-shield text-[#00B8D4]'} text-[10px] mr-1"></i> ${t.trader}</td>
+                    <td class="p-4 font-bold tracking-wider text-white">${t.pair.toUpperCase()}</td>
+                    <td class="p-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${t.direction === 'Long' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${t.direction.toUpperCase()}</span></td>
+                    <td class="p-4 text-gray-400 font-medium"><i class="fa-solid fa-clock-three text-[10px] mr-1"></i> ${t.session}</td>
+                    <td class="p-4 text-gray-300 font-medium">${t.lotSize} Lots <span class="block text-[10px] text-gray-500 mt-0.5">R:R Target: ${t.riskReward}</span></td>
+                    <td class="p-4 text-right ${pnlClass}">${pnlAmount >= 0 ? '+' : ''}${pnlAmount.toFixed(2)}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeOutcomeClass}">${t.outcome}</span>
                     </td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${t.trader === 'Ali' ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-blue-950 text-blue-300 border border-blue-800'}">
-                            ${t.trader}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 font-bold text-slate-200">${t.pair ? t.pair.toUpperCase() : 'N/A'}</td>
-                    <td class="py-3 px-4">
-                        <span class="flex items-center gap-1.5 ${t.direction === 'Long' ? 'text-emerald-400' : 'text-rose-400'} font-semibold">
-                            <i class="fa-solid ${t.direction === 'Long' ? 'fa-chart-line' : 'fa-arrow-trend-down'}"></i> ${t.direction}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-slate-300 font-medium">${t.session || 'London'}</td>
-                    <td class="py-3 px-4 text-slate-400">${t.lotSize || '0.10'}</td>
-                    <td class="py-3 px-4 font-semibold text-slate-300">${t.riskReward || '1.0'}:1</td>
-                    <td class="py-3 px-4 font-bold ${isWin ? 'text-emerald-400' : 'text-rose-400'}">
-                        ${isWin ? '+' : ''}$${pnlAmount.toFixed(2)}
-                    </td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isWin ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20' : 'bg-rose-950/60 text-rose-400 border border-rose-500/20'}">
-                            ${isWin ? 'WIN' : 'LOSS'}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4">
-                        <span class="text-slate-400 text-[11px] flex items-center gap-1">
-                            <i class="fa-solid ${t.emotion === 'Calm' ? 'fa-face-smile text-emerald-400' : 'fa-face-frown text-amber-400'} text-xs"></i>
-                            ${t.emotion || 'Calm'}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="requestDeleteTrade('${t.id}')" class="text-slate-500 hover:text-rose-400 transition duration-150 p-1" title="Delete trade permanently">
-                            <i class="fa-solid fa-trash-can text-sm"></i>
-                        </button>
+                    <td class="p-4 text-center text-gray-400"><span class="bg-[#1C2430] border border-[#262F3D] px-2 py-0.5 rounded text-[10px] font-medium">${t.emotion}</span></td>
+                    <td class="p-4 text-center">
+                        <button onclick="requestRecordDeletion('${t.id}')" class="text-gray-600 hover:text-red-400 p-1 rounded transition cursor-pointer"><i class="fa-solid fa-trash-can-xmark"></i></button>
                     </td>
                 `;
 
-                // Sub-row containing notes details and screenshots
-                const notesTr = document.createElement("tr");
-                notesTr.className = "bg-[#131722]/40 border-b border-[#2A2E39]/10";
-                
+                // Supplementary notes row asset expansion
+                const notesTr = document.createElement('tr');
+                notesTr.className = "bg-[#11161F]/20 border-b border-[#222C3B]/10";
                 notesTr.innerHTML = `
-                    <td colspan="11" class="py-2.5 px-4 text-[11px] text-slate-400">
-                        <div class="flex flex-col md:flex-row gap-4 items-start">
-                            ${t.screenshot ? `
-                            <div class="relative w-48 h-28 flex-shrink-0 bg-[#0B0E14] rounded-xl overflow-hidden border border-[#2A2E39] cursor-zoom-in group glow-blue" onclick="openLightbox('${t.screenshot.replace(/'/g, "\\'")}')">
-                                <img src="${t.screenshot}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/400x200/131722/F23645?text=Invalid+Image+Source';">
-                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-200">
-                                    <span class="text-[10px] text-white bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700 font-bold"><i class="fa-solid fa-expand mr-1 text-indigo-400"></i> Maximize Chart</span>
-                                </div>
+                    <td colspan="10" class="px-4 pb-4 pt-1 text-gray-400 text-[11px]">
+                        <div class="flex flex-col sm:flex-row gap-4 items-start">
+                            <div class="flex-grow bg-[#151A22]/50 p-2.5 rounded-xl border border-[#262F3D]/40">
+                                <span class="font-bold text-gray-500 uppercase text-[9px] block tracking-wide mb-0.5">Retrospective Marks</span>
+                                ${t.notes && t.notes.trim() !== "" ? t.notes : "No dynamic notes entered for this transaction setup."}
                             </div>
-                            ` : `
-                            <div class="w-48 h-28 flex-shrink-0 bg-[#1C2030]/20 rounded-xl border border-dashed border-[#2A2E39] flex flex-col items-center justify-center text-slate-600">
-                                <i class="fa-regular fa-image text-lg mb-1"></i>
-                                <span class="text-[9px]">No Chart Captured</span>
-                            </div>
-                            `}
-                            <div class="flex-1 space-y-1.5 min-w-0">
-                                <span class="font-bold text-slate-500 uppercase tracking-wider text-[9px] block">Technical Confluences & Trade Notes</span>
-                                <p class="italic text-slate-300 leading-relaxed">"${t.notes || 'No confluences logged. Always note down your strategy to retain long-term memory!'}"</p>
-                                
-                                <div class="mt-3 p-3 bg-indigo-950/20 border border-indigo-500/20 rounded-xl font-sans">
-                                    <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
-                                        <div class="flex items-center gap-1.5">
-                                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 text-xs"></i>
-                                            <span class="text-xs font-bold text-indigo-300">Gemini Vision Trade Audit</span>
-                                        </div>
-                                        <button onclick="analyzeIndividualTrade('${t.id}')" id="btn-audit-${t.id}" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-[10px] font-bold py-1 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
-                                            <i class="fa-solid fa-robot"></i> Audit Trade & Chart
-                                        </button>
-                                    </div>
-                                    <div id="ai-response-${t.id}" class="text-[11px] text-slate-400 leading-relaxed whitespace-pre-line select-text">
-                                        Click 'Audit Trade & Chart' to have Gemini analyze your technical notes, emotions, and charts dynamically.
-                                    </div>
-                                    <div id="ai-audio-panel-${t.id}" class="hidden mt-2 flex items-center gap-2">
-                                        <button onclick="speakResponseText('${t.id}')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[10px] py-1 px-2.5 rounded-lg flex items-center gap-1.5 transition">
-                                            <i class="fa-solid fa-volume-high"></i> Listen to Coach Guidance
-                                        </button>
-                                        <span id="audio-loading-${t.id}" class="hidden text-[9px] text-indigo-400 animate-pulse"><i class="fa-solid fa-circle-notch animate-spin"></i> Converting voice...</span>
-                                    </div>
-                                </div>
-                            </div>
+                            ${imageThumbnailMarkup}
                         </div>
                     </td>
                 `;
+
                 tbody.appendChild(tr);
                 tbody.appendChild(notesTr);
             });
         }
 
-        // Delete Trade Trigger Confirmation Modal
-        function requestDeleteTrade(id) {
-            tradeIdToDelete = id;
-            document.getElementById("confirmDeleteModal").classList.remove("hidden");
-        }
-
-        function closeDeleteConfirmation() {
-            tradeIdToDelete = null;
-            document.getElementById("confirmDeleteModal").classList.add("hidden");
-        }
-
-        // Delete Trade Logic Execution
-        async function deleteTrade() {
-            if (!tradeIdToDelete) return;
-            const id = tradeIdToDelete;
-            closeDeleteConfirmation();
-
-            if (supabaseClient) {
-                try {
-                    const { error } = await supabaseClient
-                        .from('trades')
-                        .delete()
-                        .eq('id', id);
-
-                    if (error) throw error;
-                    
-                    showNotification("Trade Deleted", "Trade register successfully deleted from Supabase cloud.", "success");
-                    // Filter locally immediately to prevent delay representation
-                    tradesList = tradesList.filter(t => t.id !== id);
-                    refreshDashboardAndTable();
-                } catch(e) {
-                    console.error("Supabase deletion failed:", e);
-                    showNotification("Delete Error", "Could not remove log from Cloud.", "error");
-                }
+        // SCREENSHOT DYNAMIC COMPRESSION ASYNC ENGINE PROCESSING
+        function handleScreenshotUrlInput() {
+            const urlVal = document.getElementById('screenshotUrlField').value;
+            if (urlVal && urlVal.trim() !== "") {
+                document.getElementById('screenshotFileField').value = ""; // Clear conflict alternative
+                selectedScreenshotBase64 = urlVal;
+                document.getElementById('screenshotPreviewImg').src = urlVal;
+                document.getElementById('screenshotPreviewWrapper').classList.remove('hidden');
             } else {
-                // Offline LocalStorage path
-                tradesList = tradesList.filter(t => t.id !== id);
-                localStorage.setItem("trading_journal_trades", JSON.stringify(tradesList));
-                // Set the dismissed flag so empty states don't re-trigger mock-seeding on page load
-                localStorage.setItem("journal_mock_dismissed", "true");
-                refreshDashboardAndTable();
-                showNotification("Trade Deleted", "Trade removed from your device's browser memory.", "info");
+                clearAttachedScreenshot();
             }
         }
 
-        // Wipe all local mock trades cleanly
-        function wipeAllCurrentTrades() {
-            localStorage.setItem("journal_mock_dismissed", "true");
-            tradesList = [];
-            localStorage.setItem("trading_journal_trades", JSON.stringify([]));
-            refreshDashboardAndTable();
-            closeDbSettingsModal();
-            showNotification("Clean Slate Activated", "All mock trades successfully cleared. Your journal is now completely clean!", "success");
+        function handleScreenshotFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('screenshotUrlField').value = ""; // Clear conflict alternative
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Initialize lightweight scaling Canvas parameters
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 700;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Output tiny base64 JPEG payload to minimize memory allocations
+                    selectedScreenshotBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('screenshotPreviewImg').src = selectedScreenshotBase64;
+                    document.getElementById('screenshotPreviewWrapper').classList.remove('hidden');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearAttachedScreenshot() {
+            selectedScreenshotBase64 = "";
+            document.getElementById('screenshotUrlField').value = "";
+            document.getElementById('screenshotFileField').value = "";
+            document.getElementById('screenshotPreviewWrapper').classList.add('hidden');
+            document.getElementById('screenshotPreviewImg').src = "";
+        }
+
+        // FORM ACTIONS MODAL WINDOW HANDLERS
+        function openRecordModal() {
+            document.getElementById('tradeForm').reset();
+            clearAttachedScreenshot();
+            
+            // Default automated date and sequence tracking defaults
+            const now = new Date();
+            document.getElementById('tradeDate').value = now.toISOString().split('T')[0];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('tradeTime').value = `${hours}:${minutes}`;
+            
+            const daysArr = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            document.getElementById('tradeDay').value = daysArr[now.getDay()] === 'Sunday' || daysArr[now.getDay()] === 'Saturday' ? 'Friday' : daysArr[now.getDay()];
+
+            setOutcomeSelection('WIN');
+            document.getElementById('recordModal').classList.remove('hidden');
+        }
+
+        function closeRecordModal() {
+            document.getElementById('recordModal').classList.add('hidden');
+        }
+
+        function setOutcomeSelection(type) {
+            selectedOutcome = type;
+            const winBtn = document.getElementById('outcomeWinBtn');
+            const lossBtn = document.getElementById('outcomeLossBtn');
+
+            if (type === 'WIN') {
+                winBtn.className = "bg-emerald-500/20 border border-[#00E676] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+            } else {
+                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                lossBtn.className = "bg-rose-500/20 border border-red-500 text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+            }
+        }
+
+        function handleTradeSubmit(e) {
+            e.preventDefault();
+
+            const newTrade = {
+                id: "trade-" + Date.now(),
+                trader: currentTrader,
+                date: document.getElementById('tradeDate').value,
+                time: document.getElementById('tradeTime').value,
+                day: document.getElementById('tradeDay').value,
+                pair: document.getElementById('tradePair').value.toUpperCase(),
+                direction: document.getElementById('tradeDirection').value,
+                session: document.getElementById('tradeSession').value,
+                lotSize: parseFloat(document.getElementById('tradeLotSize').value || 1.0),
+                entryPrice: parseFloat(document.getElementById('tradeEntry').value || 0),
+                exitPrice: parseFloat(document.getElementById('tradeExit').value || 0),
+                riskReward: document.getElementById('tradeRR').value || "1.0",
+                emotion: document.getElementById('tradeEmotion').value,
+                pnl: parseFloat(document.getElementById('tradePnL').value || 0),
+                outcome: selectedOutcome,
+                notes: document.getElementById('tradeNotes').value,
+                screenshot: selectedScreenshotBase64
+            };
+
+            tradesList.unshift(newTrade);
+            localStorage.setItem('alpha_trades_registry', JSON.stringify(tradesList));
+            
+            closeRecordModal();
+            applyFilters();
+            updateAnalytics(tradesList);
+        }
+
+        // CONTROLLED DIALOG FLOW - REPLACING NATIVE CONFIRMATION WINDOWS
+        function openCustomConfirm(title, description, onConfirmCallback) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalDescription').innerText = description;
+            onCustomConfirmAction = onConfirmCallback;
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+        }
+
+        function dismissCustomConfirm(isConfirmed) {
+            document.getElementById('customConfirmModal').classList.add('hidden');
+            if (isConfirmed && onCustomConfirmAction) {
+                onCustomConfirmAction();
+            }
+            onCustomConfirmAction = null;
+        }
+
+        function requestRecordDeletion(id) {
+            openCustomConfirm(
+                "Purge Strategic Transaction Block?",
+                "This action cannot be undone. This sequence will be deleted permanently from your device log ledger.",
+                () => {
+                    tradesList = tradesList.filter(t => t.id !== id);
+                    localStorage.setItem('alpha_trades_registry', JSON.stringify(tradesList));
+                    applyFilters();
+                    updateAnalytics(tradesList);
+                }
+            );
+        }
+
+        function triggerPurgeMockTrades() {
+            closeSettingsModal();
+            openCustomConfirm(
+                "Wipe Demo & Mock Database History?",
+                "This action clears the seed data entirely so Ali and Nabeel have a completely fresh slate repository workspace.",
+                () => {
+                    tradesList = [];
+                    localStorage.setItem('alpha_trades_registry', JSON.stringify(tradesList));
+                    localStorage.setItem('alpha_mock_dismissed', 'true');
+                    applyFilters();
+                    updateAnalytics(tradesList);
+                }
+            );
+        }
+
+        // SETTINGS & LIGHTBOX MANAGEMENT INTERACTION WINDOWS
+        function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+        
+        function saveDatabaseCredentials() {
+            // Simulated local caching parameters verification structure
+            closeSettingsModal();
+        }
+
+        function triggerLightboxMaximize(src) {
+            document.getElementById('lightboxTargetImage').src = src;
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        }
+
+        function closeLightboxModal() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+            document.getElementById('lightboxTargetImage').src = "";
         }
     </script>
 </body>
