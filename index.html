@@ -6,12 +6,12 @@
     <title>Alpha Edge | Alpha Trading Journal</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Icons (Free Vector Matrix) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0B0E11;
@@ -34,7 +34,7 @@
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#00B8D4]/10 rounded-full blur-2xl"></div>
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#00B8D4]/10 text-[#00B8D4] text-2xl mb-4 border border-[#00B8D4]/20">
-                    <i class="fa-solid flex fa-chart-line"></i>
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Alpha Edge Vault</h1>
                 <p class="text-sm text-gray-400 mt-1">Exclusive Internal Trading Sync Terminal</p>
@@ -44,10 +44,10 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Select Identity</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="selectUser('Ali')" id="btnAli" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer">
-                            <i class="fa-solid fa-user-crown text-[#00E676] text-xs"></i> Ali
+                        <button type="button" onclick="selectUser('Ali')" id="btnAli" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer pointer-events-auto relative z-10">
+                            <i class="fa-solid fa-user-tie text-[#00E676] text-xs"></i> Ali
                         </button>
-                        <button onclick="selectUser('Nabeel')" id="btnNabeel" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer">
+                        <button type="button" onclick="selectUser('Nabeel')" id="btnNabeel" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#262F3D] bg-[#1C2430] hover:bg-[#222C3B] text-gray-300 font-medium transition cursor-pointer pointer-events-auto relative z-10">
                             <i class="fa-solid fa-user-shield text-[#00E676] text-xs"></i> Nabeel
                         </button>
                     </div>
@@ -57,7 +57,7 @@
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Secure Passcode</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                            <i class="fa-solid fa-lock-keyhole"></i>
+                            <i class="fa-solid fa-lock"></i>
                         </span>
                         <input type="password" id="passcodeField" placeholder="••••••••" class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl py-3 pl-10 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#00B8D4] transition text-center tracking-widest">
                     </div>
@@ -67,7 +67,7 @@
                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> Invalid access authorization key!
                 </div>
 
-                <button onclick="attemptLogin()" class="w-full bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-bold py-3.5 rounded-xl shadow-lg cursor-pointer transform hover:-translate-y-0.5 transition duration-150 glow-green mt-2">
+                <button type="button" onclick="attemptLogin()" class="w-full bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-bold py-3.5 rounded-xl shadow-lg cursor-pointer transform hover:-translate-y-0.5 transition duration-150 glow-green mt-2 pointer-events-auto relative z-10">
                     Initialize Terminal Session <i class="fa-solid fa-right-to-bracket ml-1"></i>
                 </button>
             </div>
@@ -100,13 +100,13 @@
 
                 <!-- QUICK ACTIONS -->
                 <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <button onclick="openSettingsModal()" class="bg-[#1C2430] border border-[#262F3D] hover:bg-[#222C3B] text-gray-300 font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer">
+                    <button type="button" onclick="openSettingsModal()" class="bg-[#1C2430] border border-[#262F3D] hover:bg-[#222C3B] text-gray-300 font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer pointer-events-auto">
                         <i class="fa-solid fa-database text-yellow-500"></i> Setup Cloud / DB
                     </button>
-                    <button onclick="openRecordModal()" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-extrabold px-5 py-2 rounded-xl text-sm flex items-center gap-2 transition glow-green shadow-lg cursor-pointer">
+                    <button type="button" onclick="openRecordModal()" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-extrabold px-5 py-2 rounded-xl text-sm flex items-center gap-2 transition glow-green shadow-lg cursor-pointer pointer-events-auto">
                         <i class="fa-solid fa-circle-plus"></i> Record Trade Log
                     </button>
-                    <button onclick="logoutSession()" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition cursor-pointer" title="Disconnect Terminal">
+                    <button type="button" onclick="logoutSession()" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 w-9 h-9 rounded-xl flex items-center justify-center text-sm transition cursor-pointer pointer-events-auto" title="Disconnect Terminal">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
@@ -119,13 +119,13 @@
             <!-- MOTIVATIONAL SYNC CARD -->
             <div class="bg-gradient-to-r from-[#151A22] to-[#11161F] border border-[#222C3B] rounded-2xl p-5 flex items-start gap-4 relative overflow-hidden shadow-lg">
                 <div class="text-[#00B8D4] text-xl bg-[#00B8D4]/10 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-[#00B8D4]/20">
-                    <i class="fa-solid fa-brain-circuit"></i>
+                    <i class="fa-solid fa-brain"></i>
                 </div>
                 <div>
                     <h4 class="text-xs font-bold uppercase tracking-widest text-[#00B8D4]">Psychology Protocol / Quote of the Session</h4>
                     <p id="motivationalQuote" class="text-sm text-gray-300 mt-1 font-medium italic">"The market is a device for transferring money from the impatient to the patient." – Warren Buffett</p>
                 </div>
-                <button onclick="rotateQuote()" class="ml-auto text-gray-500 hover:text-gray-300 text-xs self-center p-2 cursor-pointer transition">
+                <button type="button" onclick="rotateQuote()" class="ml-auto text-gray-500 hover:text-gray-300 text-xs self-center p-2 cursor-pointer transition pointer-events-auto">
                     <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
@@ -189,151 +189,6 @@
                     </div>
                     <div class="h-64 relative">
                         <canvas id="sessionBarChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ADVANCED COMPREHENSIVE ANALYTICS MATRIX SECTION -->
-            <section class="bg-[#151A22] border border-[#222C3B] rounded-2xl p-6 shadow-md space-y-6">
-                <div class="flex items-center gap-3 border-b border-[#222C3B] pb-3">
-                    <i class="fa-solid fa-chart-network text-[#00B8D4] text-lg"></i>
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-white">Advanced Strategy Analytics Matrix</h3>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- PROFIT AND LOSS SUB MATRIX -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-[#00B8D4] flex items-center gap-1.5">
-                            <i class="fa-solid fa-wallet"></i> Profit and Loss
-                        </h4>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Total PnL:</span><span id="advTotalPnL" class="font-bold text-white">$0.00</span></div>
-                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Win Rate:</span><span id="advWinRate" class="font-bold text-[#00E676]">0%</span></div>
-                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Total Trades:</span><span id="advTotalTrades" class="font-bold text-white">0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Breakeven Trades:</span><span id="advBetTrades" class="font-bold text-yellow-500">0</span></div>
-                        </div>
-                    </div>
-
-                    <!-- EXPECTANCY & PROFIT FACTOR SUB MATRIX -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-[#00E676] flex items-center gap-1.5">
-                            <i class="fa-solid fa-calculator"></i> Expectancy & Profit Factor
-                        </h4>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Expectancy:</span><span id="advExpectancy" class="font-bold text-white">$0.00</span></div>
-                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Profit Factor:</span><span id="advProfitFactor" class="font-bold text-white">0.00</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Avg Trade Frequency:</span><span id="advFrequency" class="font-bold text-purple-400">0.0 / day</span></div>
-                        </div>
-                    </div>
-
-                    <!-- PERFORMANCE BY SIDE SUB MATRIX -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-arrows-left-right"></i> Performance by Side
-                        </h4>
-                        <div class="space-y-3 text-xs">
-                            <div class="flex items-center justify-between border-b border-[#222C3B]/40 pb-1.5">
-                                <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded font-bold text-[10px]">LONG</span>
-                                <span class="text-gray-400">Trades: <span id="advLongTrades" class="text-white font-bold">0</span> | WR: <span id="advLongWR" class="text-[#00E676] font-bold">0%</span></span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded font-bold text-[10px]">SHORT</span>
-                                <span class="text-gray-400">Trades: <span id="advShortTrades" class="text-white font-bold">0</span> | WR: <span id="advShortWR" class="text-[#00E676] font-bold">0%</span></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PERFORMANCE BY SESSION SUB MATRIX -->
-                <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-widest text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-earth-americas text-[#00B8D4]"></i> Performance by Session
-                    </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
-                            <div class="font-bold text-[#00E676] border-b border-[#222C3B]/30 pb-1">🇬🇧 London Session</div>
-                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="lonWR" class="font-semibold text-white">0%</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="lonTrades" class="font-semibold text-white">0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="lonAvgRR" class="font-semibold text-white">0.0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="lonProfit" class="font-semibold text-white">$0.00</span></div>
-                        </div>
-                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
-                            <div class="font-bold text-[#00B8D4] border-b border-[#222C3B]/30 pb-1">🇺🇸 New York Session</div>
-                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="nyWR" class="font-semibold text-white">0%</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="nyTrades" class="font-semibold text-white">0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="nyAvgRR" class="font-semibold text-white">0.0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="nyProfit" class="font-semibold text-white">$0.00</span></div>
-                        </div>
-                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
-                            <div class="font-bold text-purple-400 border-b border-[#222C3B]/30 pb-1">🇯🇵 Asian Session</div>
-                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="asWR" class="font-semibold text-white">0%</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="asTrades" class="font-semibold text-white">0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="asAvgRR" class="font-semibold text-white">0.0</span></div>
-                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="asProfit" class="font-semibold text-white">$0.00</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TIME, DAY, MONTH CALENDAR SUB MATRIX -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-                    <!-- PERFORMANCE BY TIME CARD -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center border-b border-[#222C3B]/40 pb-1">
-                                <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-hourglass-start text-[#00E676]"></i> Performance by Time
-                                </h4>
-                                <button onclick="toggleDetailSection('timeDetail', 'timeArrow')" class="text-gray-400 hover:text-white transition cursor-pointer" title="Expand Full Hours Ranking">
-                                    <i class="fa-solid fa-chevron-down text-[10px]" id="timeArrow"></i>
-                                </button>
-                            </div>
-                            <div class="flex justify-between pt-2.5"><span class="text-gray-400">Most Profitable Hours:</span><span id="advBestHours" class="font-bold text-[#00E676]">N/A</span></div>
-                        </div>
-                        <!-- Expanded Ordered Ranking View Container -->
-                        <div id="timeDetail" class="hidden mt-3 space-y-1.5 border-t border-[#222C3B]/30 pt-2 max-h-40 overflow-y-auto">
-                            <!-- Dynamic ordered listing loaded via runtime -->
-                        </div>
-                    </div>
-
-                    <!-- PERFORMANCE BY DAY CARD -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center border-b border-[#222C3B]/40 pb-1">
-                                <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-calendar-day text-[#00B8D4]"></i> Performance by Day
-                                </h4>
-                                <button onclick="toggleDetailSection('dayDetail', 'dayArrow')" class="text-gray-400 hover:text-white transition cursor-pointer" title="Expand Full Days Ranking">
-                                    <i class="fa-solid fa-chevron-down text-[10px]" id="dayArrow"></i>
-                                </button>
-                            </div>
-                            <div class="flex justify-between pt-2.5"><span class="text-gray-400">Which Days Work Best:</span><span id="advBestDays" class="font-bold text-[#00B8D4]">N/A</span></div>
-                        </div>
-                        <!-- Expanded Ordered Day Profile Container -->
-                        <div id="dayDetail" class="hidden mt-3 space-y-1.5 border-t border-[#222C3B]/30 pt-2 max-h-40 overflow-y-auto">
-                            <!-- Dynamic sorted days lists loaded via runtime -->
-                        </div>
-                    </div>
-
-                    <!-- PERFORMANCE CALENDAR MONTH & DAILY TRACK CARD -->
-                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center border-b border-[#222C3B]/40 pb-1">
-                                <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-calendar-alt text-purple-400"></i> Performance Calendar
-                                </h4>
-                                <button onclick="toggleDetailSection('calendarDetail', 'calendarArrow')" class="text-gray-400 hover:text-white transition cursor-pointer" title="Expand Chronological Daily Breakdown">
-                                    <i class="fa-solid fa-chevron-down text-[10px]" id="calendarArrow"></i>
-                                </button>
-                            </div>
-                            <div id="advMonthlyCalendar" class="space-y-1.5 pt-2">
-                                <!-- Dynamic Monthly Performance Loads Here -->
-                                <span class="text-gray-500 italic">No month data calculated</span>
-                            </div>
-                        </div>
-                        <!-- Expanded Individual Daily Hit/Loss Breakdown List -->
-                        <div id="calendarDetail" class="hidden mt-3 space-y-2 border-t border-[#222C3B]/30 pt-2 max-h-40 overflow-y-auto">
-                            <!-- Injected Chronological Log Entries by system engine -->
-                        </div>
                     </div>
                 </div>
             </section>
@@ -403,9 +258,9 @@
         <div class="bg-[#151A22] border border-[#262F3D] w-full max-w-2xl rounded-2xl p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-5">
             <div class="flex justify-between items-center pb-3 border-b border-[#262F3D]">
                 <h3 id="modalTitleText" class="text-base font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-square-sliders-stroke text-[#00E676]"></i> Committing New Strategic Ledger Block
+                    <i class="fa-solid fa-sliders text-[#00E676]"></i> Committing New Strategic Ledger Block
                 </h3>
-                <button onclick="closeRecordModal()" class="text-gray-400 hover:text-white transition text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" onclick="closeRecordModal()" class="text-gray-400 hover:text-white transition text-lg cursor-pointer pointer-events-auto"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <!-- CORE REGISTRATION FORM INTERFACE -->
@@ -490,13 +345,13 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Trade Outcome Matrix</label>
                         <div class="grid grid-cols-3 gap-2 h-[38px]">
-                            <button type="button" id="outcomeWinBtn" onclick="setOutcomeSelection('WIN')" class="bg-[#1C2430] border border-[#262F3D] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                            <button type="button" id="outcomeWinBtn" onclick="setOutcomeSelection('WIN')" class="border rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-circle-check"></i> WIN
                             </button>
-                            <button type="button" id="outcomeLossBtn" onclick="setOutcomeSelection('LOSS')" class="bg-[#1C2430] border border-[#262F3D] text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                            <button type="button" id="outcomeLossBtn" onclick="setOutcomeSelection('LOSS')" class="border rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-circle-xmark"></i> LOSS
                             </button>
-                            <button type="button" id="outcomeBreakevenBtn" onclick="setOutcomeSelection('BREAKEVEN')" class="bg-[#1C2430] border border-[#262F3D] text-yellow-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                            <button type="button" id="outcomeBreakevenBtn" onclick="setOutcomeSelection('BREAKEVEN')" class="border rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-circle-minus"></i> BE
                             </button>
                         </div>
@@ -543,7 +398,7 @@
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-gears text-yellow-500"></i> Operational Connection Configuration
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" onclick="closeSettingsModal()" class="text-gray-400 hover:text-white transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="space-y-3">
@@ -555,7 +410,7 @@
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Supabase Anonymous Public Token Key</label>
                     <input type="password" id="dbKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2 text-xs text-white placeholder-gray-700 focus:outline-none focus:border-[#00B8D4]">
                 </div>
-                <button onclick="saveDatabaseCredentials()" class="w-full bg-[#00B8D4] hover:bg-[#00a2bc] text-[#0A0E12] font-bold py-2 rounded-xl text-xs shadow-md transition cursor-pointer">
+                <button type="button" onclick="saveDatabaseCredentials()" class="w-full bg-[#00B8D4] hover:bg-[#00a2bc] text-[#0A0E12] font-bold py-2 rounded-xl text-xs shadow-md transition cursor-pointer">
                     Link Shared Architecture Cloud Sync
                 </button>
             </div>
@@ -566,7 +421,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i> Administration & Recovery Zone
                 </h4>
                 <p class="text-[11px] text-gray-400 mb-3">If you or Nabeel see initial demo data that you already deleted, purge it permanently here:</p>
-                <button onclick="triggerPurgeMockTrades()" class="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
+                <button type="button" onclick="triggerPurgeMockTrades()" class="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-trash-can"></i> Clear All Mock/Demo Trades
                 </button>
             </div>
@@ -575,32 +430,32 @@
 
     <!-- MODAL COMPONENT BLOCK: LIGHTBOX SCREENSHOT MAXIMIZER -->
     <div id="lightboxModal" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4 hidden" onclick="closeLightboxModal()">
-        <button class="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         <div class="max-w-4xl w-full max-h-[85vh] flex items-center justify-center shadow-2xl border border-[#262F3D] rounded-xl overflow-hidden bg-[#11161F]" onclick="event.stopPropagation()">
             <img id="lightboxTargetImage" src="" class="max-w-full max-h-[85vh] object-contain">
         </div>
     </div>
 
-    <!-- COMPLIANT INTERNAL CONFIRMATION PROMPT DIALOG OVERLAY (NO BROWSER NATIVE ALERT BLOCKS) -->
+    <!-- COMPLIANT INTERNAL CONFIRMATION PROMPT DIALOG OVERLAY -->
     <div id="customConfirmModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-[#151A22] border border-red-500/30 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center space-y-4">
             <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center text-xl mx-auto border border-red-500/20">
-                <i class="fa-solid fa-trash-arrow-up"></i>
+                <i class="fa-solid fa-trash"></i>
             </div>
             <div>
                 <h3 id="confirmModalTitle" class="text-sm font-bold text-white">Purge Strategic Block Entry?</h3>
                 <p id="confirmModalDescription" class="text-xs text-gray-400 mt-1">This operational data point will be stripped permanently from local cache and linked clusters.</p>
             </div>
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="dismissCustomConfirm(false)" class="bg-[#1C2430] hover:bg-[#222C3B] border border-[#262F3D] text-gray-300 font-bold py-2 rounded-xl text-xs cursor-pointer transition">Abort</button>
-                <button onclick="dismissCustomConfirm(true)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-xl text-xs cursor-pointer transition shadow-lg">Confirm Purge</button>
+                <button type="button" onclick="dismissCustomConfirm(false)" class="bg-[#1C2430] hover:bg-[#222C3B] border border-[#262F3D] text-gray-300 font-bold py-2 rounded-xl text-xs cursor-pointer transition">Abort</button>
+                <button type="button" onclick="dismissCustomConfirm(true)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-xl text-xs cursor-pointer transition shadow-lg">Confirm Purge</button>
             </div>
         </div>
     </div>
 
     <!-- MAIN SYSTEM CORE ARCHITECTURE JAVASCRIPT MOTOR RUNTIME -->
     <script>
-        // Seed initial trades if both LocalStorage and Supabase are empty
+        // Seed initial trades[cite: 2]
         const defaultMockTrades = [
             { id: "mock-1", trader: "Ali", date: "2026-06-15", time: "14:30", day: "Monday", pair: "EURUSD", direction: "Long", session: "London", entryPrice: 1.08520, exitPrice: 1.08950, lotSize: 0.5, pnl: 215.00, outcome: "WIN", riskReward: "2.1", emotion: "Calm", notes: "Clean breakout from Asian session range. Retest was successful.", screenshot: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80" },
             { id: "mock-2", trader: "Nabeel", date: "2026-06-16", time: "16:15", day: "Tuesday", pair: "GBPUSD", direction: "Short", session: "New York", entryPrice: 1.26800, exitPrice: 1.26420, lotSize: 1.0, pnl: 380.00, outcome: "WIN", riskReward: "3.0", emotion: "Calm", notes: "NY opening sweep. Caught high of the day setup perfectly.", screenshot: "" },
@@ -608,7 +463,6 @@
             { id: "mock-4", trader: "Nabeel", date: "2026-06-22", time: "15:45", day: "Monday", pair: "XAUUSD", direction: "Short", session: "New York", entryPrice: 2345.50, exitPrice: 2352.00, lotSize: 0.3, pnl: -195.00, outcome: "LOSS", riskReward: "2.0", emotion: "Greed", notes: "Tried to short gold during high impact news. Slipped stop loss.", screenshot: "" }
         ];
 
-        // Psychological Master Quotes Rotation Registry
         const psychologicalQuotesPool = [
             `"The market is a device for transferring money from the impatient to the patient." – Warren Buffett`,
             `"Amateur traders focus on how much money they can make. Professional traders focus on risk management." – Paul Tudor Jones`,
@@ -617,18 +471,15 @@
             `"Accepting a loss is a core technical component of an elite trading edge. Revenge trading is the path to ruin."`
         ];
 
-        // Global State Variables
         let tradesList = [];
         let pnlChartInstance = null;
         let sessionChartInstance = null;
         let currentTrader = null;
-        let selectedOutcome = "WIN"; // Default form choice
-        let selectedScreenshotBase64 = ""; // Holds local uploaded base64 data or chart link
-        let tradeIdToDelete = null; // Guard for non-alert, safe deletion flow
-        let onCustomConfirmAction = null; // Holds callback pointer
-        let editingTradeId = null; // Holds reference identity during edit sequence operations
+        let selectedOutcome = "WIN";
+        let selectedScreenshotBase64 = "";
+        let onCustomConfirmAction = null;
+        let editingTradeId = null;
 
-        // Initialization Pipeline Lifecycle Entry
         window.addEventListener('DOMContentLoaded', () => {
             initializeSystemData();
             rotateQuote();
@@ -646,16 +497,21 @@
             } else {
                 tradesList = [];
             }
-            
-            // Sync UI inputs with standard selections
             setOutcomeSelection('WIN');
         }
 
-        // IDENTITY TERMINAL GATEKEEPER PASSCODE CONTROLS
         function selectUser(user) {
             currentTrader = user;
-            document.getElementById('btnAli').className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer " + (user === 'Ali' ? "border-[#00E676] bg-[#00E676]/10 text-white" : "border-[#262F3D] bg-[#1C2430] text-gray-400");
-            document.getElementById('btnNabeel').className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer " + (user === 'Nabeel' ? "border-[#00E676] bg-[#00E676]/10 text-white" : "border-[#262F3D] bg-[#1C2430] text-gray-400");
+            const btnAli = document.getElementById('btnAli');
+            const btnNabeel = document.getElementById('btnNabeel');
+
+            if (user === 'Ali') {
+                btnAli.className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer border-[#00E676] bg-[#00E676]/10 text-white pointer-events-auto relative z-10 grid-cols-1";
+                btnNabeel.className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer border-[#262F3D] bg-[#1C2430] text-gray-400 pointer-events-auto relative z-10 grid-cols-1";
+            } else {
+                btnAli.className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer border-[#262F3D] bg-[#1C2430] text-gray-400 pointer-events-auto relative z-10 grid-cols-1";
+                btnNabeel.className = "flex items-center justify-center gap-2 py-3 rounded-xl border font-medium transition cursor-pointer border-[#00E676] bg-[#00E676]/10 text-white pointer-events-auto relative z-10 grid-cols-1";
+            }
         }
 
         function attemptLogin() {
@@ -674,8 +530,7 @@
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 document.getElementById('displayUser').innerText = currentTrader;
                 
-                // Trigger compilation of interface tables and charts
-                renderTable(tradesList);
+                applyFilters();
                 updateAnalytics(tradesList);
             } else {
                 errorLabel.innerText = "Invalid security access code sequence!";
@@ -689,215 +544,11 @@
             document.getElementById('mainDashboard').classList.add('hidden');
         }
 
-        // SYSTEM DYNAMIC MOTIVATIONAL MOTOR
         function rotateQuote() {
             const randomIndex = Math.floor(Math.random() * psychologicalQuotesPool.length);
             document.getElementById('motivationalQuote').innerText = psychologicalQuotesPool[randomIndex];
         }
 
-        // EXPANDABLE CHEVRON ACCORDION TOGGLE CONTROLLER
-        function toggleDetailSection(divId, arrowId) {
-            const el = document.getElementById(divId);
-            const arrow = document.getElementById(arrowId);
-            if(el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                arrow.className = "fa-solid fa-chevron-up text-[10px]";
-            } else {
-                el.classList.add('hidden');
-                arrow.className = "fa-solid fa-chevron-down text-[10px]";
-            }
-        }
-
-        // ADVANCED MATH PROCESSING COMPILATION FOR THE ANALYTICS SECTION
-        function runAdvancedAnalyticsMetrics(trades) {
-            const total = trades.length;
-            if (total === 0) {
-                document.getElementById('advTotalPnL').innerText = "$0.00";
-                document.getElementById('advWinRate').innerText = "0%";
-                document.getElementById('advTotalTrades').innerText = "0";
-                document.getElementById('advBetTrades').innerText = "0";
-                document.getElementById('advExpectancy').innerText = "$0.00";
-                document.getElementById('advProfitFactor').innerText = "0.00";
-                document.getElementById('advFrequency').innerText = "0.0 / day";
-                document.getElementById('advLongTrades').innerText = "0";
-                document.getElementById('advLongWR').innerText = "0%";
-                document.getElementById('advShortTrades').innerText = "0";
-                document.getElementById('advShortWR').innerText = "0%";
-                ['lon', 'ny', 'as'].forEach(pfx => {
-                    document.getElementById(`${pfx}WR`).innerText = "0%";
-                    document.getElementById(`${pfx}Trades`).innerText = "0";
-                    document.getElementById(`${pfx}AvgRR`).innerText = "0.0";
-                    document.getElementById(`${pfx}Profit`).innerText = "$0.00";
-                });
-                document.getElementById('advBestHours').innerText = "N/A";
-                document.getElementById('advBestDays').innerText = "N/A";
-                document.getElementById('advMonthlyCalendar').innerHTML = `<span class="text-gray-500 italic">No month data calculated</span>`;
-                document.getElementById('timeDetail').innerHTML = `<span class="text-gray-500 italic px-1 block">No time sequence mapped.</span>`;
-                document.getElementById('dayDetail').innerHTML = `<span class="text-gray-500 italic px-1 block">No day sequence mapped.</span>`;
-                document.getElementById('calendarDetail').innerHTML = `<span class="text-gray-500 italic px-1 block">No dates tracked yet.</span>`;
-                return;
-            }
-
-            // Profit & Loss + Basic Yields
-            const wins = trades.filter(t => t.outcome === 'WIN');
-            const breakevens = trades.filter(t => t.outcome === 'BREAKEVEN');
-            const netPnL = trades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
-            
-            document.getElementById('advTotalPnL').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netPnL);
-            document.getElementById('advTotalPnL').className = netPnL >= 0 ? "font-bold text-[#00E676]" : "font-bold text-red-400";
-            document.getElementById('advWinRate').innerText = Math.round((wins.length / total) * 100) + "%";
-            document.getElementById('advTotalTrades').innerText = total;
-            document.getElementById('advBetTrades').innerText = breakevens.length;
-
-            // Expectancy & Profit Factor Engine
-            const expectancy = netPnL / total;
-            document.getElementById('advExpectancy').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(expectancy);
-            document.getElementById('advExpectancy').className = expectancy >= 0 ? "font-bold text-[#00E676]" : "font-bold text-red-400";
-
-            const grossProfit = trades.reduce((acc, t) => acc + (parseFloat(t.pnl || 0) > 0 ? parseFloat(t.pnl) : 0), 0);
-            const grossLoss = trades.reduce((acc, t) => acc + (parseFloat(t.pnl || 0) < 0 ? Math.abs(parseFloat(t.pnl)) : 0), 0);
-            document.getElementById('advProfitFactor').innerText = grossLoss === 0 ? (grossProfit > 0 ? "∞" : "0.00") : (grossProfit / grossLoss).toFixed(2);
-
-            // Frequency Formula (Trades divided by Unique Days active)
-            const uniqueDates = [...new Set(trades.map(t => t.date))];
-            document.getElementById('advFrequency').innerText = `${(total / (uniqueDates.length || 1)).toFixed(1)} trades/day`;
-
-            // Side Vectors Performance 
-            const longs = trades.filter(t => t.direction === 'Long');
-            const shorts = trades.filter(t => t.direction === 'Short');
-            document.getElementById('advLongTrades').innerText = longs.length;
-            document.getElementById('advLongWR').innerText = longs.length ? Math.round((longs.filter(t => t.outcome === 'WIN').length / longs.length) * 100) + "%" : "0%";
-            document.getElementById('advShortTrades').innerText = shorts.length;
-            document.getElementById('advShortWR').innerText = shorts.length ? Math.round((shorts.filter(t => t.outcome === 'WIN').length / shorts.length) * 100) + "%" : "0%";
-
-            // Session Mapping Loop Breakdown
-            const maps = { 'London': 'lon', 'New York': 'ny', 'Asian': 'as' };
-            Object.keys(maps).forEach(sess => {
-                const sTrades = trades.filter(t => t.session === sess);
-                const prefix = maps[sess];
-                if (sTrades.length === 0) {
-                    document.getElementById(`${prefix}WR`).innerText = "0%";
-                    document.getElementById(`${prefix}Trades`).innerText = "0";
-                    document.getElementById(`${prefix}AvgRR`).innerText = "0.0";
-                    document.getElementById(`${prefix}Profit`).innerText = "$0.00";
-                    return;
-                }
-                const sWins = sTrades.filter(t => t.outcome === 'WIN');
-                const sPnL = sTrades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
-                const sAvgRR = (sTrades.reduce((acc, t) => acc + parseFloat(t.riskReward || 0), 0) / sTrades.length).toFixed(1);
-
-                document.getElementById(`${prefix}WR`).innerText = Math.round((sWins.length / sTrades.length) * 100) + "%";
-                document.getElementById(`${prefix}Trades`).innerText = sTrades.length;
-                document.getElementById(`${prefix}AvgRR`).innerText = sAvgRR;
-                document.getElementById(`${prefix}Profit`).innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sPnL);
-                document.getElementById(`${prefix}Profit').className = sPnL >= 0 ? "font-semibold text-[#00E676]" : "font-semibold text-red-400";
-            });
-
-            // Hour Profiles Extraction & Complete Ranking Compilation
-            const hourMap = {};
-            trades.forEach(t => {
-                if (t.time) {
-                    const hr = t.time.split(':')[0] + ":00";
-                    hourMap[hr] = (hourMap[hr] || 0) + parseFloat(t.pnl || 0);
-                }
-            });
-            const sortedHours = Object.keys(hourMap).sort((a,b) => hourMap[b] - hourMap[a]);
-            if(sortedHours.length > 0) {
-                const bestHr = sortedHours[0];
-                document.getElementById('advBestHours').innerText = hourMap[bestHr] > 0 ? `${bestHr} (+$${hourMap[bestHr].toFixed(2)})` : `${bestHr} ($${hourMap[bestHr].toFixed(2)})`;
-            } else {
-                document.getElementById('advBestHours').innerText = "N/A";
-            }
-
-            // Injected Sorted Hours Loop Layout Container
-            const timeDetailEl = document.getElementById('timeDetail');
-            timeDetailEl.innerHTML = "";
-            sortedHours.forEach((h, index) => {
-                const val = hourMap[h];
-                const row = document.createElement('div');
-                row.className = "flex justify-between items-center text-[11px] pb-1 border-b border-[#222C3B]/20 px-1";
-                row.innerHTML = `<span class="text-gray-400 font-medium">Rank #${index + 1} (${h})</span><span class="font-bold ${val >= 0 ? 'text-[#00E676]' : 'text-red-400'}">${val >= 0 ? '+' : ''}$${val.toFixed(2)}</span>`;
-                timeDetailEl.appendChild(row);
-            });
-
-            // Day Profiles Extraction & Complete Ranking Compilation
-            const dayMap = {};
-            trades.forEach(t => { if(t.day) dayMap[t.day] = (dayMap[t.day] || 0) + parseFloat(t.pnl || 0); });
-            const sortedDays = Object.keys(dayMap).sort((a,b) => dayMap[b] - dayMap[a]);
-            if(sortedDays.length > 0) {
-                const bestD = sortedDays[0];
-                document.getElementById('advBestDays').innerText = dayMap[bestD] > 0 ? `${bestD} (+$${dayMap[bestD].toFixed(2)})` : `${bestD} ($${dayMap[bestD].toFixed(2)})`;
-            } else {
-                document.getElementById('advBestDays').innerText = "N/A";
-            }
-
-            // Injected Sorted Days Loop Layout Container
-            const dayDetailEl = document.getElementById('dayDetail');
-            dayDetailEl.innerHTML = "";
-            sortedDays.forEach((d, index) => {
-                const val = dayMap[d];
-                const row = document.createElement('div');
-                row.className = "flex justify-between items-center text-[11px] pb-1 border-b border-[#222C3B]/20 px-1";
-                row.innerHTML = `<span class="text-gray-400 font-medium">Rank #${index + 1} (${d})</span><span class="font-bold ${val >= 0 ? 'text-[#00E676]' : 'text-red-400'}">${val >= 0 ? '+' : ''}$${val.toFixed(2)}</span>`;
-                dayDetailEl.appendChild(row);
-            });
-
-            // Performance Calendar: Month Mapping Output
-            const monthMap = {};
-            trades.forEach(t => { if(t.date) { const m = t.date.substring(0,7); monthMap[m] = (monthMap[m] || 0) + parseFloat(t.pnl || 0); } });
-            const calendarEl = document.getElementById('advMonthlyCalendar');
-            calendarEl.innerHTML = "";
-            const monthsSorted = Object.keys(monthMap).sort().reverse();
-            monthsSorted.forEach(m => {
-                const amt = monthMap[m];
-                const div = document.createElement('div');
-                div.className = "flex justify-between border-b border-[#222C3B]/30 pb-1";
-                div.innerHTML = `<span class="text-gray-400 font-semibold">${m}:</span><span class="font-bold ${amt >= 0 ? 'text-[#00E676]':'text-red-400'}">${amt >= 0 ? '+':''}${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amt)}</span>`;
-                calendarEl.appendChild(div);
-            });
-
-            // Performance Calendar: Granular Day-by-Day (TP vs SL Mapping Engine)
-            const dateBreakdownMap = {};
-            trades.forEach(t => {
-                if(t.date) {
-                    if(!dateBreakdownMap[t.date]) {
-                        dateBreakdownMap[t.date] = { pnl: 0, winCount: 0, lossCount: 0, beCount: 0 };
-                    }
-                    dateBreakdownMap[t.date].pnl += parseFloat(t.pnl || 0);
-                    if(t.outcome === 'WIN') dateBreakdownMap[t.date].winCount++;
-                    else if(t.outcome === 'LOSS') dateBreakdownMap[t.date].lossCount++;
-                    else dateBreakdownMap[t.date].beCount++;
-                }
-            });
-
-            const calendarDetailEl = document.getElementById('calendarDetail');
-            calendarDetailEl.innerHTML = "";
-            const sortedDates = Object.keys(dateBreakdownMap).sort().reverse(); // Newest active execution day at top
-            sortedDates.forEach(dateStr => {
-                const data = dateBreakdownMap[dateStr];
-                const item = document.createElement('div');
-                item.className = "bg-[#151A22] border border-[#222C3B]/60 p-2 rounded-xl text-[11px] space-y-1";
-                
-                let statsBadges = "";
-                if(data.winCount > 0) statsBadges += `<span class="text-[#00E676] font-bold">[${data.winCount} TP]</span> `;
-                if(data.lossCount > 0) statsBadges += `<span class="text-red-400 font-bold">[${data.lossCount} SL]</span> `;
-                if(data.beCount > 0) statsBadges += `<span class="text-yellow-500 font-bold">[${data.beCount} BE]</span> `;
-
-                item.innerHTML = `
-                    <div class="flex justify-between items-center font-bold">
-                        <span class="text-white"><i class="fa-solid fa-calendar text-[9px] text-purple-400 mr-1"></i> ${dateStr}</span>
-                        <span class="${data.pnl >= 0 ? 'text-[#00E676]' : 'text-red-400'}">${data.pnl >= 0 ? '+' : ''}$${data.pnl.toFixed(2)}</span>
-                    </div>
-                    <div class="text-[10px] flex justify-between items-center text-gray-500">
-                        <span>Daily Matrix Result:</span>
-                        <div>${statsBadges}</div>
-                    </div>
-                `;
-                calendarDetailEl.appendChild(item);
-            });
-        }
-
-        // SYSTEM MATH ANALYTICS CORE PROCESSING ENGINE (1-2 MONTH ENGINE)
         function updateAnalytics(trades) {
             const totalTrades = trades.length;
             document.getElementById('statTotalTrades').innerText = totalTrades;
@@ -910,11 +561,9 @@
                 document.getElementById('statBestDay').innerText = "N/A";
                 document.getElementById('statBestDirection').innerText = "N/A";
                 renderCharts([], { London: 0, "New York": 0, Asian: 0 });
-                runAdvancedAnalyticsMetrics(trades);
                 return;
             }
 
-            // Calculations Metrics
             const wins = trades.filter(t => t.outcome === 'WIN');
             const winRate = Math.round((wins.length / totalTrades) * 100);
             document.getElementById('statWinRate').innerText = `${winRate}%`;
@@ -922,13 +571,13 @@
             const netPnL = trades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
             const formattedPnL = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netPnL);
             document.getElementById('statNetPnL').innerText = formattedPnL;
+            
             if (netPnL >= 0) {
                 document.getElementById('statNetPnL').className = "text-2xl font-black text-[#00E676] mt-2";
             } else {
                 document.getElementById('statNetPnL').className = "text-2xl font-black text-red-400 mt-2";
             }
 
-            // Advanced Cluster Math: Best Session, Day and Direction Extraction based on profitable track records
             const sessionsMap = { London: 0, "New York": 0, Asian: 0 };
             const daysMap = { Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0 };
             const directionMap = { Long: 0, Short: 0 };
@@ -947,7 +596,6 @@
             document.getElementById('statBestDay').innerText = daysMap[bestDay] > 0 ? bestDay : "N/A";
             document.getElementById('statBestDirection').innerText = directionMap[bestDirection] > 0 ? bestDirection : "N/A";
 
-            // Compile data sets for charts pipeline mapping
             let rollingSum = 0;
             const lineCoordinates = trades.slice().reverse().map(t => {
                 rollingSum += parseFloat(t.pnl || 0);
@@ -955,14 +603,9 @@
             });
 
             renderCharts(lineCoordinates, sessionsMap);
-            
-            // Core Trigger Call For Advanced Analytics Update Blocks
-            runAdvancedAnalyticsMetrics(trades);
         }
 
-        // GRAPH RENDER CONTROLLER (CHART.JS INTERACTION ENGINE)
         function renderCharts(lineData, barDataMap) {
-            // Line Chart Curve Engine
             const ctxLine = document.getElementById('pnlLineChart').getContext('2d');
             if (pnlChartInstance) pnlChartInstance.destroy();
             
@@ -993,7 +636,6 @@
                 }
             });
 
-            // Bar Chart Session Distribution Engine
             const ctxBar = document.getElementById('sessionBarChart').getContext('2d');
             if (sessionChartInstance) sessionChartInstance.destroy();
 
@@ -1019,7 +661,6 @@
             });
         }
 
-        // DYNAMIC FILTER MATRIX ENGINE
         function applyFilters() {
             const trader = document.getElementById('filterTrader').value;
             const session = document.getElementById('filterSession').value;
@@ -1034,13 +675,12 @@
             renderTable(filtered);
         }
 
-        // RENDERING MECHANISM FOR TABLE LEDGER VIEW
         function renderTable(trades) {
             const tbody = document.getElementById('tradesTableBody');
             tbody.innerHTML = "";
 
             if (trades.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500 font-medium">No tracking logs match active filter configuration parameters. Click 'Record Trade Log' to update.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-500 font-medium">No tracking logs match parameters. Click 'Record Trade Log' to add.</td></tr>`;
                 return;
             }
 
@@ -1060,14 +700,13 @@
                     badgeOutcomeClass = "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
                 }
                 
-                // Screenshot Render Logic Validation
                 let imageThumbnailMarkup = "";
                 if (t.screenshot && t.screenshot.trim() !== "") {
                     imageThumbnailMarkup = `
                         <div class="mt-2 relative group w-28 h-16 rounded-lg overflow-hidden border border-[#262F3D] bg-black shadow-inner cursor-zoom-in" onclick="triggerLightboxMaximize('${t.screenshot}')">
                             <img src="${t.screenshot}" class="w-full h-full object-cover transition duration-300 group-hover:scale-110">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-200">
-                                <i class="fa-solid fa-maximize text-white text-xs"></i>
+                                <i class="fa-solid fa-expand text-white text-xs"></i>
                             </div>
                         </div>
                     `;
@@ -1075,10 +714,10 @@
 
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-white">${t.date}<span class="block text-[10px] font-normal text-gray-500 mt-0.5">${t.time} • ${t.day}</span></td>
-                    <td class="p-4 font-medium text-gray-300"><i class="fa-solid ${t.trader === 'Ali' ? 'fa-user-crown text-[#00E676]' : 'fa-user-shield text-[#00B8D4]'} text-[10px] mr-1"></i> ${t.trader}</td>
+                    <td class="p-4 font-medium text-gray-300"><i class="fa-solid ${t.trader === 'Ali' ? 'fa-user text-[#00E676]' : 'fa-user-shield text-[#00B8D4]'} text-[10px] mr-1"></i> ${t.trader}</td>
                     <td class="p-4 font-bold tracking-wider text-white">${t.pair.toUpperCase()}</td>
                     <td class="p-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${t.direction === 'Long' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${t.direction.toUpperCase()}</span></td>
-                    <td class="p-4 text-gray-400 font-medium"><i class="fa-solid fa-clock-three text-[10px] mr-1"></i> ${t.session}</td>
+                    <td class="p-4 text-gray-400 font-medium"><i class="fa-solid fa-clock text-[10px] mr-1"></i> ${t.session}</td>
                     <td class="p-4 text-gray-300 font-medium">${t.lotSize} Lots <span class="block text-[10px] text-gray-500 mt-0.5">R:R Target: ${t.riskReward}</span></td>
                     <td class="p-4 text-right ${pnlClass}">${pnlAmount > 0 ? '+' : ''}${pnlAmount.toFixed(2)}</td>
                     <td class="p-4 text-center">
@@ -1086,12 +725,11 @@
                     </td>
                     <td class="p-4 text-center text-gray-400"><span class="bg-[#1C2430] border border-[#262F3D] px-2 py-0.5 rounded text-[10px] font-medium">${t.emotion}</span></td>
                     <td class="p-4 text-center whitespace-nowrap">
-                        <button onclick="editRecord('${t.id}')" class="text-gray-600 hover:text-[#00B8D4] p-1 rounded transition cursor-pointer mr-2" title="Edit Strategic Block"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="requestRecordDeletion('${t.id}')" class="text-gray-600 hover:text-red-400 p-1 rounded transition cursor-pointer" title="Purge Block Record"><i class="fa-solid fa-trash-can-xmark"></i></button>
+                        <button type="button" onclick="editRecord('${t.id}')" class="text-gray-600 hover:text-[#00B8D4] p-1 rounded transition cursor-pointer mr-2 pointer-events-auto" title="Edit Strategic Block"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button type="button" onclick="requestRecordDeletion('${t.id}')" class="text-gray-600 hover:text-red-400 p-1 rounded transition cursor-pointer pointer-events-auto" title="Purge Block Record"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
 
-                // Supplementary notes row asset expansion
                 const notesTr = document.createElement('tr');
                 notesTr.className = "bg-[#11161F]/20 border-b border-[#222C3B]/10";
                 notesTr.innerHTML = `
@@ -1111,7 +749,6 @@
             });
         }
 
-        // PAKISTAN TIME AUTOMATED SESSION ENGINE DETECTOR
         function autoSelectSession() {
             const timeVal = document.getElementById('tradeTime').value;
             if (!timeVal) return;
@@ -1119,7 +756,7 @@
             const [hours, minutes] = timeVal.split(':').map(Number);
             const sessionSelect = document.getElementById('tradeSession');
 
-            // Standard Forex trading sessions correlated explicitly to Pakistan Time (PKT - UTC+5)
+            // PKT Session Correlations (UTC+5 Alignment)
             if (hours >= 5 && hours < 13) {
                 sessionSelect.value = "Asian";
             } else if (hours >= 13 && hours < 17) {
@@ -1129,11 +766,10 @@
             }
         }
 
-        // SCREENSHOT DYNAMIC COMPRESSION ASYNC ENGINE PROCESSING
         function handleScreenshotUrlInput() {
             const urlVal = document.getElementById('screenshotUrlField').value;
             if (urlVal && urlVal.trim() !== "") {
-                document.getElementById('screenshotFileField').value = ""; // Clear conflict alternative
+                document.getElementById('screenshotFileField').value = ""; 
                 selectedScreenshotBase64 = urlVal;
                 document.getElementById('screenshotPreviewImg').src = urlVal;
                 document.getElementById('screenshotPreviewWrapper').classList.remove('hidden');
@@ -1146,13 +782,12 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            document.getElementById('screenshotUrlField').value = ""; // Clear conflict alternative
+            document.getElementById('screenshotUrlField').value = ""; 
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // Initialize lightweight scaling Canvas parameters
                     const canvas = document.createElement('canvas');
                     const MAX_WIDTH = 700;
                     let width = img.width;
@@ -1168,7 +803,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Output tiny base64 JPEG payload to minimize memory allocations
                     selectedScreenshotBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     document.getElementById('screenshotPreviewImg').src = selectedScreenshotBase64;
                     document.getElementById('screenshotPreviewWrapper').classList.remove('hidden');
@@ -1186,16 +820,14 @@
             document.getElementById('screenshotPreviewImg').src = "";
         }
 
-        // FORM ACTIONS MODAL WINDOW HANDLERS
         function openRecordModal() {
             editingTradeId = null; 
-            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-square-sliders-stroke text-[#00E676]"></i> Committing New Strategic Ledger Block`;
+            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-sliders text-[#00E676]"></i> Committing New Strategic Ledger Block`;
             document.getElementById('submitTradeBtn').innerText = "Commit Strategy Block";
 
             document.getElementById('tradeForm').reset();
             clearAttachedScreenshot();
             
-            // Default automated date and sequence tracking defaults
             const now = new Date();
             document.getElementById('tradeDate').value = now.toISOString().split('T')[0];
             const hours = String(now.getHours()).padStart(2, '0');
@@ -1206,7 +838,7 @@
             document.getElementById('tradeDay').value = daysArr[now.getDay()] === 'Sunday' || daysArr[now.getDay()] === 'Saturday' ? 'Friday' : daysArr[now.getDay()];
 
             setOutcomeSelection('WIN');
-            autoSelectSession(); // Run initial calculation on default hour assignment
+            autoSelectSession();
             document.getElementById('recordModal').classList.remove('hidden');
         }
 
@@ -1222,32 +854,29 @@
             const breakBtn = document.getElementById('outcomeBreakevenBtn');
 
             if (type === 'WIN') {
-                winBtn.className = "bg-emerald-500/20 border border-[#00E676] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                winBtn.className = "bg-emerald-500/20 border border-[#00E676] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
             } else if (type === 'LOSS') {
-                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                lossBtn.className = "bg-rose-500/20 border border-red-500 text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                lossBtn.className = "bg-rose-500/20 border border-red-500 text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
             } else {
-                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-                breakBtn.className = "bg-yellow-500/20 border border-yellow-500 text-yellow-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
+                breakBtn.className = "bg-yellow-500/20 border border-yellow-500 text-yellow-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow h-[38px]";
             }
         }
 
-        // POPULATE REGISTERED TRANSACTION BLOCK TO EDITING SYSTEM CONTEXT
         function editRecord(id) {
             const trade = tradesList.find(t => t.id === id);
             if (!trade) return;
 
             editingTradeId = id;
 
-            // Shift form headers dynamically to clarify mode state change
-            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-square-sliders-stroke text-[#00B8D4]"></i> Updating Strategic Ledger Block`;
+            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-sliders text-[#00B8D4]"></i> Updating Strategic Ledger Block`;
             document.getElementById('submitTradeBtn').innerText = "Update Strategy Block";
 
-            // Push payload data variables inside configuration elements
             document.getElementById('tradeDate').value = trade.date;
             document.getElementById('tradeTime').value = trade.time;
             document.getElementById('tradeDay').value = trade.day;
@@ -1297,17 +926,15 @@
             };
 
             if (editingTradeId) {
-                // Find and overwrite array entry mapping to existing sequence index blocks
                 const index = tradesList.findIndex(t => t.id === editingTradeId);
                 if (index !== -1) {
                     tradesList[index] = {
-                        ...tradesList[index], // Retains unique static context like user ownership fields and primary ID keys
+                        ...tradesList[index],
                         ...payloadData
                     };
                 }
                 editingTradeId = null;
             } else {
-                // Normal Append Flow execution logic
                 const newTrade = {
                     id: "trade-" + Date.now(),
                     trader: currentTrader,
@@ -1323,7 +950,6 @@
             updateAnalytics(tradesList);
         }
 
-        // CONTROLLED DIALOG FLOW - REPLACING NATIVE CONFIRMATION WINDOWS
         function openCustomConfirm(title, description, onConfirmCallback) {
             document.getElementById('confirmModalTitle').innerText = title;
             document.getElementById('confirmModalDescription').innerText = description;
@@ -1367,13 +993,9 @@
             );
         }
 
-        // SETTINGS & LIGHTBOX MANAGEMENT INTERACTION WINDOWS
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
-        
-        function saveDatabaseCredentials() {
-            closeSettingsModal();
-        }
+        function saveDatabaseCredentials() { closeSettingsModal(); }
 
         function triggerLightboxMaximize(src) {
             document.getElementById('lightboxTargetImage').src = src;
