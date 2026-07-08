@@ -193,6 +193,113 @@
                 </div>
             </section>
 
+            <!-- ADVANCED COMPREHENSIVE ANALYTICS MATRIX SECTION -->
+            <section class="bg-[#151A22] border border-[#222C3B] rounded-2xl p-6 shadow-md space-y-6">
+                <div class="flex items-center gap-3 border-b border-[#222C3B] pb-3">
+                    <i class="fa-solid fa-chart-network text-[#00B8D4] text-lg"></i>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-white">Advanced Strategy Analytics Matrix</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- PROFIT AND LOSS SUB MATRIX -->
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-[#00B8D4] flex items-center gap-1.5">
+                            <i class="fa-solid fa-wallet"></i> Profit and Loss
+                        </h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Total PnL:</span><span id="advTotalPnL" class="font-bold text-white">$0.00</span></div>
+                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Win Rate:</span><span id="advWinRate" class="font-bold text-[#00E676]">0%</span></div>
+                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Total Trades:</span><span id="advTotalTrades" class="font-bold text-white">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Breakeven Trades:</span><span id="advBetTrades" class="font-bold text-yellow-500">0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- EXPECTANCY & PROFIT FACTOR SUB MATRIX -->
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-[#00E676] flex items-center gap-1.5">
+                            <i class="fa-solid fa-calculator"></i> Expectancy & Profit Factor
+                        </h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Expectancy:</span><span id="advExpectancy" class="font-bold text-white">$0.00</span></div>
+                            <div class="flex justify-between border-b border-[#222C3B]/40 pb-1.5"><span class="text-gray-400">Profit Factor:</span><span id="advProfitFactor" class="font-bold text-white">0.00</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Avg Trade Frequency:</span><span id="advFrequency" class="font-bold text-purple-400">0.0 / day</span></div>
+                        </div>
+                    </div>
+
+                    <!-- PERFORMANCE BY SIDE SUB MATRIX -->
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-left-right"></i> Performance by Side
+                        </h4>
+                        <div class="space-y-3 text-xs">
+                            <div class="flex items-center justify-between border-b border-[#222C3B]/40 pb-1.5">
+                                <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded font-bold text-[10px]">LONG</span>
+                                <span class="text-gray-400">Trades: <span id="advLongTrades" class="text-white font-bold">0</span> | WR: <span id="advLongWR" class="text-[#00E676] font-bold">0%</span></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded font-bold text-[10px]">SHORT</span>
+                                <span class="text-gray-400">Trades: <span id="advShortTrades" class="text-white font-bold">0</span> | WR: <span id="advShortWR" class="text-[#00E676] font-bold">0%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERFORMANCE BY SESSION SUB MATRIX -->
+                <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-earth-americas text-[#00B8D4]"></i> Performance by Session
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
+                            <div class="font-bold text-[#00E676] border-b border-[#222C3B]/30 pb-1">🇬🇧 London Session</div>
+                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="lonWR" class="font-semibold text-white">0%</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="lonTrades" class="font-semibold text-white">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="lonAvgRR" class="font-semibold text-white">0.0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="lonProfit" class="font-semibold text-white">$0.00</span></div>
+                        </div>
+                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
+                            <div class="font-bold text-[#00B8D4] border-b border-[#222C3B]/30 pb-1">🇺🇸 New York Session</div>
+                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="nyWR" class="font-semibold text-white">0%</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="nyTrades" class="font-semibold text-white">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="nyAvgRR" class="font-semibold text-white">0.0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="nyProfit" class="font-semibold text-white">$0.00</span></div>
+                        </div>
+                        <div class="bg-[#151A22] border border-[#222C3B]/60 p-3 rounded-lg space-y-1.5">
+                            <div class="font-bold text-purple-400 border-b border-[#222C3B]/30 pb-1">🇯🇵 Asian Session</div>
+                            <div class="flex justify-between"><span class="text-gray-400">Win Rate:</span><span id="asWR" class="font-semibold text-white">0%</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Total Trades:</span><span id="asTrades" class="font-semibold text-white">0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Avg RR:</span><span id="asAvgRR" class="font-semibold text-white">0.0</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Profit:</span><span id="asProfit" class="font-semibold text-white">$0.00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIME, DAY, MONTH CALENDAR SUB MATRIX -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-2">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hourglass-start text-[#00E676]"></i> Performance by Time
+                        </h4>
+                        <div class="flex justify-between pt-1"><span class="text-gray-400">Most Profitable Hours:</span><span id="advBestHours" class="font-bold text-[#00E676]">N/A</span></div>
+                    </div>
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-2">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-day text-[#00B8D4]"></i> Performance by Day
+                        </h4>
+                        <div class="flex justify-between pt-1"><span class="text-gray-400">Which Days Work Best:</span><span id="advBestDays" class="font-bold text-[#00B8D4]">N/A</span></div>
+                    </div>
+                    <div class="bg-[#11161F] border border-[#222C3B] p-4 rounded-xl space-y-2 flex flex-col justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-alt text-purple-400"></i> Performance Calendar
+                        </h4>
+                        <div id="advMonthlyCalendar" class="space-y-1.5 max-h-24 overflow-y-auto pt-1 flex-grow mt-2">
+                            <!-- Dynamic Months Load Block -->
+                            <span class="text-gray-500 italic">No month data calculated</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- TRADING LEDGER RECORD HEADQUARTERS -->
             <section class="bg-[#151A22] border border-[#222C3B] rounded-2xl shadow-md overflow-hidden">
                 <!-- FILTER UTILITY DECK -->
@@ -550,7 +657,127 @@
             document.getElementById('motivationalQuote').innerText = psychologicalQuotesPool[randomIndex];
         }
 
-        // SYSTEM MATH ANALYTICS CORE PROCESSING ENGINE (1-2 MONTH DATA CALCULATIONS)
+        // ADVANCED MATH PROCESSING COMPILATION FOR THE NEW ANALYTICS SECTION
+        function runAdvancedAnalyticsMetrics(trades) {
+            const total = trades.length;
+            if (total === 0) {
+                document.getElementById('advTotalPnL').innerText = "$0.00";
+                document.getElementById('advWinRate').innerText = "0%";
+                document.getElementById('advTotalTrades').innerText = "0";
+                document.getElementById('advBetTrades').innerText = "0";
+                document.getElementById('advExpectancy').innerText = "$0.00";
+                document.getElementById('advProfitFactor').innerText = "0.00";
+                document.getElementById('advFrequency').innerText = "0.0 / day";
+                document.getElementById('advLongTrades').innerText = "0";
+                document.getElementById('advLongWR').innerText = "0%";
+                document.getElementById('advShortTrades').innerText = "0";
+                document.getElementById('advShortWR').innerText = "0%";
+                ['lon', 'ny', 'as'].forEach(pfx => {
+                    document.getElementById(`${pfx}WR`).innerText = "0%";
+                    document.getElementById(`${pfx}Trades`).innerText = "0";
+                    document.getElementById(`${pfx}AvgRR`).innerText = "0.0";
+                    document.getElementById(`${pfx}Profit`).innerText = "$0.00";
+                });
+                document.getElementById('advBestHours').innerText = "N/A";
+                document.getElementById('advBestDays').innerText = "N/A";
+                document.getElementById('advMonthlyCalendar').innerHTML = `<span class="text-gray-500 italic">No month data calculated</span>`;
+                return;
+            }
+
+            // Profit & Loss + Basic Yields
+            const wins = trades.filter(t => t.outcome === 'WIN');
+            const breakevens = trades.filter(t => t.outcome === 'BREAKEVEN');
+            const netPnL = trades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
+            
+            document.getElementById('advTotalPnL').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netPnL);
+            document.getElementById('advTotalPnL').className = netPnL >= 0 ? "font-bold text-[#00E676]" : "font-bold text-red-400";
+            document.getElementById('advWinRate').innerText = Math.round((wins.length / total) * 100) + "%";
+            document.getElementById('advTotalTrades').innerText = total;
+            document.getElementById('advBetTrades').innerText = breakevens.length;
+
+            // Expectancy & Profit Factor Engine
+            const expectancy = netPnL / total;
+            document.getElementById('advExpectancy').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(expectancy);
+            document.getElementById('advExpectancy').className = expectancy >= 0 ? "font-bold text-[#00E676]" : "font-bold text-red-400";
+
+            const grossProfit = trades.reduce((acc, t) => acc + (parseFloat(t.pnl || 0) > 0 ? parseFloat(t.pnl) : 0), 0);
+            const grossLoss = trades.reduce((acc, t) => acc + (parseFloat(t.pnl || 0) < 0 ? Math.abs(parseFloat(t.pnl)) : 0), 0);
+            document.getElementById('advProfitFactor').innerText = grossLoss === 0 ? (grossProfit > 0 ? "∞" : "0.00") : (grossProfit / grossLoss).toFixed(2);
+
+            // Frequency Formula (Trades divided by Unique Days active)
+            const uniqueDates = [...new Set(trades.map(t => t.date))];
+            document.getElementById('advFrequency').innerText = `${(total / (uniqueDates.length || 1)).toFixed(1)} trades/day`;
+
+            // Side Vectors Performance 
+            const longs = trades.filter(t => t.direction === 'Long');
+            const shorts = trades.filter(t => t.direction === 'Short');
+            document.getElementById('advLongTrades').innerText = longs.length;
+            document.getElementById('advLongWR').innerText = longs.length ? Math.round((longs.filter(t => t.outcome === 'WIN').length / longs.length) * 100) + "%" : "0%";
+            document.getElementById('advShortTrades').innerText = shorts.length;
+            document.getElementById('advShortWR').innerText = shorts.length ? Math.round((shorts.filter(t => t.outcome === 'WIN').length / shorts.length) * 100) + "%" : "0%";
+
+            // Session Mapping Loop Breakdown
+            const maps = { 'London': 'lon', 'New York': 'ny', 'Asian': 'as' };
+            Object.keys(maps).forEach(sess => {
+                const sTrades = trades.filter(t => t.session === sess);
+                const prefix = maps[sess];
+                if (sTrades.length === 0) {
+                    document.getElementById(`${prefix}WR`).innerText = "0%";
+                    document.getElementById(`${prefix}Trades`).innerText = "0";
+                    document.getElementById(`${prefix}AvgRR`).innerText = "0.0";
+                    document.getElementById(`${prefix}Profit`).innerText = "$0.00";
+                    return;
+                }
+                const sWins = sTrades.filter(t => t.outcome === 'WIN');
+                const sPnL = sTrades.reduce((acc, t) => acc + parseFloat(t.pnl || 0), 0);
+                const sAvgRR = (sTrades.reduce((acc, t) => acc + parseFloat(t.riskReward || 0), 0) / sTrades.length).toFixed(1);
+
+                document.getElementById(`${prefix}WR`).innerText = Math.round((sWins.length / sTrades.length) * 100) + "%";
+                document.getElementById(`${prefix}Trades`).innerText = sTrades.length;
+                document.getElementById(`${prefix}AvgRR`).innerText = sAvgRR;
+                document.getElementById(`${prefix}Profit`).innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sPnL);
+                document.getElementById(`${prefix}Profit`).className = sPnL >= 0 ? "font-semibold text-[#00E676]" : "font-semibold text-red-400";
+            });
+
+            // Hour Profiles Extraction
+            const hourMap = {};
+            trades.forEach(t => {
+                if (t.time) {
+                    const hr = t.time.split(':')[0] + ":00";
+                    hourMap[hr] = (hourMap[hr] || 0) + parseFloat(t.pnl || 0);
+                }
+            });
+            let bestHr = "N/A", maxHrPnL = -Infinity;
+            Object.keys(hourMap).forEach(h => { if(hourMap[h] > maxHrPnL) { maxHrPnL = hourMap[h]; bestHr = h; } });
+            document.getElementById('advBestHours').innerText = maxHrPnL > 0 ? `${bestHr} (+$${maxHrPnL.toFixed(2)})` : "N/A";
+
+            // Day Profiles Extraction
+            const dayMap = {};
+            trades.forEach(t => { if(t.day) dayMap[t.day] = (dayMap[t.day] || 0) + parseFloat(t.pnl || 0); });
+            let bestD = "N/A", maxDayPnL = -Infinity;
+            Object.keys(dayMap).forEach(d => { if(dayMap[d] > maxDayPnL) { maxDayPnL = dayMap[d]; bestD = d; } });
+            document.getElementById('advBestDays').innerText = maxDayPnL > 0 ? `${bestD} (+$${maxDayPnL.toFixed(2)})` : "N/A";
+
+            // Monthly Performance Calendar Output
+            const monthMap = {};
+            trades.forEach(t => { if(t.date) { const m = t.date.substring(0,7); monthMap[m] = (monthMap[m] || 0) + parseFloat(t.pnl || 0); } });
+            const calendarEl = document.getElementById('advMonthlyCalendar');
+            calendarEl.innerHTML = "";
+            const monthsSorted = Object.keys(monthMap).sort().reverse();
+            if(monthsSorted.length === 0) {
+                calendarEl.innerHTML = `<span class="text-gray-500 italic">No month data calculated</span>`;
+            } else {
+                monthsSorted.forEach(m => {
+                    const amt = monthMap[m];
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between border-b border-[#222C3B]/30 pb-1";
+                    div.innerHTML = `<span class="text-gray-400">${m}:</span><span class="font-bold ${amt >= 0 ? 'text-[#00E676]':'text-red-400'}">${amt >= 0 ? '+':''}${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amt)}</span>`;
+                    calendarEl.appendChild(div);
+                });
+            }
+        }
+
+        // SYSTEM MATH ANALYTICS CORE PROCESSING ENGINE (1-2 MONTH ENGINE)
         function updateAnalytics(trades) {
             const totalTrades = trades.length;
             document.getElementById('statTotalTrades').innerText = totalTrades;
@@ -563,6 +790,7 @@
                 document.getElementById('statBestDay').innerText = "N/A";
                 document.getElementById('statBestDirection').innerText = "N/A";
                 renderCharts([], { London: 0, "New York": 0, Asian: 0 });
+                runAdvancedAnalyticsMetrics(trades);
                 return;
             }
 
@@ -607,6 +835,9 @@
             });
 
             renderCharts(lineCoordinates, sessionsMap);
+            
+            // Core Trigger Call For Advanced Analytics Update Blocks
+            runAdvancedAnalyticsMetrics(trades);
         }
 
         // GRAPH RENDER CONTROLLER (CHART.JS INTERACTION ENGINE)
