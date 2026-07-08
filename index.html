@@ -166,7 +166,7 @@
 
             <!-- ANALYTICS ENGINE CHARTS DATA VISUALIZATION -->
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- ACCUMULATED CAPITAL CURVE LINE CHART -->
+                <!-- ACCUMULATED CAPITAL CAPITAL CURVE LINE CHART -->
                 <div class="bg-[#151A22] border border-[#222C3B] rounded-2xl p-5 shadow-md lg:col-span-2">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
@@ -217,6 +217,7 @@
                             <option value="ALL">All Outcomes</option>
                             <option value="WIN">Wins Only</option>
                             <option value="LOSS">Losses Only</option>
+                            <option value="BREAKEVEN">Breakeven Only</option>
                         </select>
                     </div>
                 </div>
@@ -235,7 +236,7 @@
                                 <th class="p-4 text-right">Net Return (P&L)</th>
                                 <th class="p-4 text-center">Status</th>
                                 <th class="p-4 text-center">Mindset/Emotion</th>
-                                <th class="p-4 text-center">Purge</th>
+                                <th class="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="tradesTableBody" class="text-xs divide-y divide-[#222C3B]/40">
@@ -256,7 +257,7 @@
     <div id="recordModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-[#151A22] border border-[#262F3D] w-full max-w-2xl rounded-2xl p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-5">
             <div class="flex justify-between items-center pb-3 border-b border-[#262F3D]">
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <h3 id="modalTitleText" class="text-base font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-square-sliders-stroke text-[#00E676]"></i> Committing New Strategic Ledger Block
                 </h3>
                 <button onclick="closeRecordModal()" class="text-gray-400 hover:text-white transition text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -271,7 +272,7 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Exact Hour Timestamp</label>
-                        <input type="time" id="tradeTime" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
+                        <input type="time" id="tradeTime" onchange="autoSelectSession()" required class="w-full bg-[#1C2430] border border-[#262F3D] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#00E676]">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Day of Week Profile</label>
@@ -343,12 +344,15 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Trade Outcome Matrix</label>
-                        <div class="grid grid-cols-2 gap-2 h-[38px]">
+                        <div class="grid grid-cols-3 gap-2 h-[38px]">
                             <button type="button" id="outcomeWinBtn" onclick="setOutcomeSelection('WIN')" class="bg-[#1C2430] border border-[#262F3D] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-circle-check"></i> WIN
                             </button>
                             <button type="button" id="outcomeLossBtn" onclick="setOutcomeSelection('LOSS')" class="bg-[#1C2430] border border-[#262F3D] text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-circle-xmark"></i> LOSS
+                            </button>
+                            <button type="button" id="outcomeBreakevenBtn" onclick="setOutcomeSelection('BREAKEVEN')" class="bg-[#1C2430] border border-[#262F3D] text-yellow-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition">
+                                <i class="fa-solid fa-circle-minus"></i> BE
                             </button>
                         </div>
                     </div>
@@ -381,7 +385,7 @@
 
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" onclick="closeRecordModal()" class="bg-[#1C2430] hover:bg-[#222C3B] border border-[#262F3D] text-gray-300 font-bold px-5 py-2.5 rounded-xl text-xs cursor-pointer transition">Cancel</button>
-                    <button type="submit" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-black px-6 py-2.5 rounded-xl text-xs glow-green shadow-lg cursor-pointer transition">Commit Strategy Block</button>
+                    <button type="submit" id="submitTradeBtn" class="bg-[#00E676] hover:bg-[#00c865] text-[#0A0E12] font-black px-6 py-2.5 rounded-xl text-xs glow-green shadow-lg cursor-pointer transition">Commit Strategy Block</button>
                 </div>
             </form>
         </div>
@@ -477,6 +481,7 @@
         let selectedScreenshotBase64 = ""; // Holds local uploaded base64 data or chart link
         let tradeIdToDelete = null; // Guard for non-alert, safe deletion flow
         let onCustomConfirmAction = null; // Holds callback pointer
+        let editingTradeId = null; // Holds reference identity during edit sequence operations
 
         // Initialization Pipeline Lifecycle Entry
         window.addEventListener('DOMContentLoaded', () => {
@@ -692,10 +697,17 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-[#1C2430]/40 transition duration-150 border-b border-[#222C3B]/20";
                 
-                const isWin = t.outcome === 'WIN';
                 const pnlAmount = parseFloat(t.pnl || 0);
-                const pnlClass = pnlAmount >= 0 ? "text-[#00E676] font-bold" : "text-red-400 font-bold";
-                const badgeOutcomeClass = isWin ? "bg-[#00E676]/10 text-[#00E676] border-#00E676/20" : "bg-red-500/10 text-red-400 border-red-500/20";
+                const pnlClass = pnlAmount > 0 ? "text-[#00E676] font-bold" : pnlAmount < 0 ? "text-red-400 font-bold" : "text-yellow-500 font-bold";
+                
+                let badgeOutcomeClass = "";
+                if (t.outcome === 'WIN') {
+                    badgeOutcomeClass = "bg-[#00E676]/10 text-[#00E676] border-[#00E676]/20";
+                } else if (t.outcome === 'LOSS') {
+                    badgeOutcomeClass = "bg-red-500/10 text-red-400 border-red-500/20";
+                } else {
+                    badgeOutcomeClass = "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
+                }
                 
                 // Screenshot Render Logic Validation
                 let imageThumbnailMarkup = "";
@@ -717,13 +729,14 @@
                     <td class="p-4"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${t.direction === 'Long' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${t.direction.toUpperCase()}</span></td>
                     <td class="p-4 text-gray-400 font-medium"><i class="fa-solid fa-clock-three text-[10px] mr-1"></i> ${t.session}</td>
                     <td class="p-4 text-gray-300 font-medium">${t.lotSize} Lots <span class="block text-[10px] text-gray-500 mt-0.5">R:R Target: ${t.riskReward}</span></td>
-                    <td class="p-4 text-right ${pnlClass}">${pnlAmount >= 0 ? '+' : ''}${pnlAmount.toFixed(2)}</td>
+                    <td class="p-4 text-right ${pnlClass}">${pnlAmount > 0 ? '+' : ''}${pnlAmount.toFixed(2)}</td>
                     <td class="p-4 text-center">
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeOutcomeClass}">${t.outcome}</span>
                     </td>
                     <td class="p-4 text-center text-gray-400"><span class="bg-[#1C2430] border border-[#262F3D] px-2 py-0.5 rounded text-[10px] font-medium">${t.emotion}</span></td>
-                    <td class="p-4 text-center">
-                        <button onclick="requestRecordDeletion('${t.id}')" class="text-gray-600 hover:text-red-400 p-1 rounded transition cursor-pointer"><i class="fa-solid fa-trash-can-xmark"></i></button>
+                    <td class="p-4 text-center whitespace-nowrap">
+                        <button onclick="editRecord('${t.id}')" class="text-gray-600 hover:text-[#00B8D4] p-1 rounded transition cursor-pointer mr-2" title="Edit Strategic Block"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="requestRecordDeletion('${t.id}')" class="text-gray-600 hover:text-red-400 p-1 rounded transition cursor-pointer" title="Purge Block Record"><i class="fa-solid fa-trash-can-xmark"></i></button>
                     </td>
                 `;
 
@@ -745,6 +758,24 @@
                 tbody.appendChild(tr);
                 tbody.appendChild(notesTr);
             });
+        }
+
+        // PAKISTAN TIME AUTOMATED SESSION ENGINE DETECTOR
+        function autoSelectSession() {
+            const timeVal = document.getElementById('tradeTime').value;
+            if (!timeVal) return;
+            
+            const [hours, minutes] = timeVal.split(':').map(Number);
+            const sessionSelect = document.getElementById('tradeSession');
+
+            // Standard Forex trading sessions correlated explicitly to Pakistan Time (PKT - UTC+5)
+            if (hours >= 5 && hours < 13) {
+                sessionSelect.value = "Asian";
+            } else if (hours >= 13 && hours < 17) {
+                sessionSelect.value = "London";
+            } else {
+                sessionSelect.value = "New York";
+            }
         }
 
         // SCREENSHOT DYNAMIC COMPRESSION ASYNC ENGINE PROCESSING
@@ -806,6 +837,10 @@
 
         // FORM ACTIONS MODAL WINDOW HANDLERS
         function openRecordModal() {
+            editingTradeId = null; 
+            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-square-sliders-stroke text-[#00E676]"></i> Committing New Strategic Ledger Block`;
+            document.getElementById('submitTradeBtn').innerText = "Commit Strategy Block";
+
             document.getElementById('tradeForm').reset();
             clearAttachedScreenshot();
             
@@ -820,33 +855,79 @@
             document.getElementById('tradeDay').value = daysArr[now.getDay()] === 'Sunday' || daysArr[now.getDay()] === 'Saturday' ? 'Friday' : daysArr[now.getDay()];
 
             setOutcomeSelection('WIN');
+            autoSelectSession(); // Run initial calculation on default hour assignment
             document.getElementById('recordModal').classList.remove('hidden');
         }
 
         function closeRecordModal() {
             document.getElementById('recordModal').classList.add('hidden');
+            editingTradeId = null;
         }
 
         function setOutcomeSelection(type) {
             selectedOutcome = type;
             const winBtn = document.getElementById('outcomeWinBtn');
             const lossBtn = document.getElementById('outcomeLossBtn');
+            const breakBtn = document.getElementById('outcomeBreakevenBtn');
 
             if (type === 'WIN') {
                 winBtn.className = "bg-emerald-500/20 border border-[#00E676] text-[#00E676] rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
                 lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
-            } else {
+                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+            } else if (type === 'LOSS') {
                 winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
                 lossBtn.className = "bg-rose-500/20 border border-red-500 text-red-400 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                breakBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+            } else {
+                winBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                lossBtn.className = "bg-[#1C2430] border border-[#262F3D] text-gray-500 rounded-xl font-medium text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
+                breakBtn.className = "bg-yellow-500/20 border border-yellow-500 text-yellow-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition flex-grow";
             }
+        }
+
+        // POPULATE REGISTERED TRANSACTION BLOCK TO EDITING SYSTEM CONTEXT
+        function editRecord(id) {
+            const trade = tradesList.find(t => t.id === id);
+            if (!trade) return;
+
+            editingTradeId = id;
+
+            // Shift form headers dynamically to clarify mode state change
+            document.getElementById('modalTitleText').innerHTML = `<i class="fa-solid fa-square-sliders-stroke text-[#00B8D4]"></i> Updating Strategic Ledger Block`;
+            document.getElementById('submitTradeBtn').innerText = "Update Strategy Block";
+
+            // Push payload data variables inside configuration elements
+            document.getElementById('tradeDate').value = trade.date;
+            document.getElementById('tradeTime').value = trade.time;
+            document.getElementById('tradeDay').value = trade.day;
+            document.getElementById('tradePair').value = trade.pair;
+            document.getElementById('tradeDirection').value = trade.direction;
+            document.getElementById('tradeSession').value = trade.session;
+            document.getElementById('tradeLotSize').value = trade.lotSize;
+            document.getElementById('tradeEntry').value = trade.entryPrice;
+            document.getElementById('tradeExit').value = trade.exitPrice;
+            document.getElementById('tradeRR').value = trade.riskReward;
+            document.getElementById('tradeEmotion').value = trade.emotion;
+            document.getElementById('tradePnL').value = trade.pnl;
+            document.getElementById('tradeNotes').value = trade.notes || "";
+            
+            setOutcomeSelection(trade.outcome);
+
+            if (trade.screenshot && trade.screenshot.trim() !== "") {
+                selectedScreenshotBase64 = trade.screenshot;
+                document.getElementById('screenshotPreviewImg').src = trade.screenshot;
+                document.getElementById('screenshotPreviewWrapper').classList.remove('hidden');
+            } else {
+                clearAttachedScreenshot();
+            }
+
+            document.getElementById('recordModal').classList.remove('hidden');
         }
 
         function handleTradeSubmit(e) {
             e.preventDefault();
 
-            const newTrade = {
-                id: "trade-" + Date.now(),
-                trader: currentTrader,
+            const payloadData = {
                 date: document.getElementById('tradeDate').value,
                 time: document.getElementById('tradeTime').value,
                 day: document.getElementById('tradeDay').value,
@@ -864,7 +945,26 @@
                 screenshot: selectedScreenshotBase64
             };
 
-            tradesList.unshift(newTrade);
+            if (editingTradeId) {
+                // Find and overwrite array entry mapping to existing sequence index blocks
+                const index = tradesList.findIndex(t => t.id === editingTradeId);
+                if (index !== -1) {
+                    tradesList[index] = {
+                        ...tradesList[index], // Retains unique static context like user ownership fields and primary ID keys
+                        ...payloadData
+                    };
+                }
+                editingTradeId = null;
+            } else {
+                // Normal Append Flow execution logic
+                const newTrade = {
+                    id: "trade-" + Date.now(),
+                    trader: currentTrader,
+                    ...payloadData
+                };
+                tradesList.unshift(newTrade);
+            }
+
             localStorage.setItem('alpha_trades_registry', JSON.stringify(tradesList));
             
             closeRecordModal();
@@ -921,7 +1021,6 @@
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
         
         function saveDatabaseCredentials() {
-            // Simulated local caching parameters verification structure
             closeSettingsModal();
         }
 
